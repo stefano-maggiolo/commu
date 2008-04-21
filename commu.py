@@ -1,21 +1,29 @@
 #!/usr/bin/env python
 
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
 #
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
 #
-#    You should have received a copy of the GNU General Public License
-#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#    Create commutative diagrams with PGF/TikZ.
-#    Version: 20080420
-#    Author: Stefano Maggiolo <maggiolo@mail.dm.unipi.it>
+#Create commutative diagrams with PGF/TikZ.
+#Version: 20080420
+#Author: Stefano Maggiolo <maggiolo@mail.dm.unipi.it>
+
+#Potential TODO:
+#- clean up code (to english, fix row-col misunderstanding);
+#- import of a diagram copied from the program;
+#- move all object and arrows left-right-up-down;
+#- object decorations (border...);
+#- template: commutative square, exact sequences ... (?);
+#- template to the power: different shape (polygons, cubes...?).
 
 import pygtk
 pygtk.require("2.0")
