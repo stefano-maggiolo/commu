@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.2 on Sun Apr 20 15:42:11 2008 -->
+<!--Generated with glade3 3.4.5 on Tue Sep 16 11:18:53 2008 -->
 <glade-interface>
   <widget class="GtkWindow" id="window">
     <property name="border_width">10</property>
+    <property name="resizable">False</property>
     <property name="icon">commu.png</property>
     <signal name="destroy" handler="on_window_destroy"/>
     <child>
@@ -38,7 +39,7 @@
               <widget class="GtkLabel" id="label6">
                 <property name="visible">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="label" translatable="yes">Columns:</property>
+                <property name="label" translatable="yes">Rows:</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -65,7 +66,7 @@
               <widget class="GtkLabel" id="label7">
                 <property name="visible">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="label" translatable="yes">Rows:</property>
+                <property name="label" translatable="yes">Columns:</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -126,6 +127,23 @@
                 <property name="position">6</property>
               </packing>
             </child>
+            <child>
+              <widget class="GtkButton" id="btImport">
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                <property name="tooltip_text">Copy the diagram in the clipboard</property>
+                <property name="label" translatable="yes">Import</property>
+                <property name="response_id">0</property>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">7</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="expand">False</property>
@@ -141,7 +159,7 @@
               <widget class="GtkLabel" id="label1">
                 <property name="visible">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="label" translatable="yes">Horizontal distance:</property>
+                <property name="label" translatable="yes">Hor distance:</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -167,7 +185,7 @@
               <widget class="GtkLabel" id="label2">
                 <property name="visible">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="label" translatable="yes">Vertical distance:</property>
+                <property name="label" translatable="yes">Vert distance:</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -224,18 +242,159 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkTable" id="table">
+          <widget class="GtkTable" id="tablex">
             <property name="visible">True</property>
             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-            <property name="n_rows">1</property>
-            <property name="n_columns">1</property>
-            <property name="column_spacing">5</property>
-            <property name="row_spacing">5</property>
+            <property name="n_rows">3</property>
+            <property name="n_columns">3</property>
             <child>
-              <placeholder/>
+              <widget class="GtkTable" id="table">
+                <property name="visible">True</property>
+                <property name="n_rows">1</property>
+                <property name="n_columns">1</property>
+                <child>
+                  <placeholder/>
+                </child>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btNW">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">↖</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btNW_clicked"/>
+              </widget>
+              <packing>
+                <property name="x_options"></property>
+                <property name="y_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btW">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">←</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btW_clicked"/>
+              </widget>
+              <packing>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+                <property name="x_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btSW">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">↙</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btSW_clicked"/>
+              </widget>
+              <packing>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+                <property name="x_options"></property>
+                <property name="y_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btN">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">↑</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btN_clicked"/>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="y_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btNE">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">↗</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btNE_clicked"/>
+              </widget>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="right_attach">3</property>
+                <property name="x_options"></property>
+                <property name="y_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btE">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">→</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btE_clicked"/>
+              </widget>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="right_attach">3</property>
+                <property name="top_attach">1</property>
+                <property name="bottom_attach">2</property>
+                <property name="x_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btSE">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">↘</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btSE_clicked"/>
+              </widget>
+              <packing>
+                <property name="left_attach">2</property>
+                <property name="right_attach">3</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+                <property name="x_options"></property>
+                <property name="y_options"></property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkButton" id="btS">
+                <property name="visible">True</property>
+                <property name="receives_default">True</property>
+                <property name="label" translatable="yes">↓</property>
+                <property name="focus_on_click">False</property>
+                <property name="response_id">0</property>
+                <signal name="clicked" handler="on_btS_clicked"/>
+              </widget>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="right_attach">2</property>
+                <property name="top_attach">2</property>
+                <property name="bottom_attach">3</property>
+                <property name="y_options"></property>
+              </packing>
             </child>
           </widget>
           <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">2</property>
           </packing>
         </child>
@@ -245,6 +404,8 @@
             <property name="spacing">5</property>
           </widget>
           <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">3</property>
           </packing>
         </child>
@@ -279,7 +440,7 @@
               </packing>
             </child>
             <child>
-              <widget class="GtkLabel" id="label9">
+              <widget class="GtkLabel" id="label4">
                 <property name="visible">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
                 <property name="label" translatable="yes">Line:</property>

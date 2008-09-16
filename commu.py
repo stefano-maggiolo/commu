@@ -14,13 +14,12 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #Create commutative diagrams with PGF/TikZ.
-#Version: 20080420
+#Version: 20080916
 #Author: Stefano Maggiolo <maggiolo@mail.dm.unipi.it>
 
 #Potential TODO:
-#- clean up code (to english, fix row-col misunderstanding);
+#- clean up code (to english);
 #- import of a diagram copied from the program;
-#- move all object and arrows left-right-up-down;
 #- object decorations (border...);
 #- template: commutative square, exact sequences ... (?);
 #- template to the power: different shape (polygons, cubes...?).
@@ -49,11 +48,13 @@ class Oggetto:
         global Tooltip
         
         self.label = gtk.Entry()
-        self.label.set_size_request(80,30)
+#        self.label.set_size_request(80,30)
         Tooltip.set_tip(self.label, "Drop here to create an arrow to this object.")
         self.box = gtk.HBox()
         self.coll = gtk.Button("0")
-        self.coll.set_size_request(30,30)
+        self.coll.set_property('focus-on-click', False)
+        self.coll.set_property('can-focus', False)
+#        self.coll.set_size_request(30,30)
         Tooltip.set_tip(self.coll, "Drag from here to create an arrow from this object.")
         self.box.add(self.label)
         self.box.add(self.coll)
@@ -66,29 +67,44 @@ class Oggetto:
         del(self.coll)
         del(self.box)
 
-    def incrementaFrecceInArrivo(self):
-        self.frecceInArrivo += 1
+    def incrementaFrecceInArrivo(self, n = 1):
+        self.frecceInArrivo += n
         self.coll.set_label("%d / %d" % (self.frecceInPartenza, self.frecceInArrivo))
         
-    def decrementaFrecceInArrivo(self):
-        self.frecceInArrivo -= 1
+    def decrementaFrecceInArrivo(self, n = 1):
+        self.frecceInArrivo -= n
         self.coll.set_label("%d / %d" % (self.frecceInPartenza, self.frecceInArrivo))
 
-    def incrementaFrecceInPartenza(self):
-        self.frecceInPartenza += 1
+    def incrementaFrecceInPartenza(self, n = 1):
+        self.frecceInPartenza += n
         self.coll.set_label("%d / %d" % (self.frecceInPartenza, self.frecceInArrivo))
 
-    def decrementaFrecceInPartenza(self):
-        self.frecceInPartenza -= 1
+    def decrementaFrecceInPartenza(self, n = 1):
+        self.frecceInPartenza -= n
         self.coll.set_label("%d / %d" % (self.frecceInPartenza, self.frecceInArrivo))
 
     def reset(self):
+        self.frecceInPartenza = self.frecceInArrivo = 0
         self.coll.set_label("%d / %d" % (self.frecceInPartenza, self.frecceInArrivo))
         self.label.set_text("")
 
     def nome(self):
         return self.label.get_text()
 
+    def set_nome(self, nome):
+        self.label.set_text(nome)
+
+    def frecce(self):
+        return self.frecceInPartenza, self.frecceInArrivo
+
+    def set_frecce(self, frecceInPartenza, frecceInArrivo):
+        self.frecceInPartenza = frecceInPartenza
+        self.frecceInArrivo = frecceInArrivo
+        self.coll.set_label("%d / %d" % (self.frecceInPartenza, self.frecceInArrivo))        
+        
+    def daScrivere(self):
+        return self.nome() != "" or self.frecceInPartenza != 0 or self.frecceInArrivo != 0
+    
     def set_da(self):
         red = gtk.gdk.color_parse("red")        
         self.coll.modify_bg(gtk.STATE_NORMAL, red)
@@ -139,7 +155,10 @@ class Freccia:
         del(self.ab)
         del(self.inarc)
         del(self.box)
-    
+
+    def focus(self):
+        self.funz.grab_focus()
+        
     def funzione(self):
         return self.funz.get_text()
 
@@ -203,6 +222,15 @@ class Commu:
                "on_btCopia_clicked": self.on_btCopia_clicked,
                "on_btReset_clicked": self.on_btReset_clicked,
                "on_btNuova_clicked": self.on_btNuova_clicked,
+               "on_btImport_clicked": self.on_btImport_clicked,
+               "on_btNW_clicked": self.on_btNW_clicked,
+               "on_btN_clicked": self.on_btN_clicked,
+               "on_btNE_clicked": self.on_btNE_clicked,
+               "on_btE_clicked": self.on_btE_clicked,
+               "on_btSE_clicked": self.on_btSE_clicked,
+               "on_btS_clicked": self.on_btS_clicked,
+               "on_btSW_clicked": self.on_btSW_clicked,
+               "on_btW_clicked": self.on_btW_clicked,
                "on_ok_clicked": self.on_ok_clicked
                }
 
@@ -248,32 +276,94 @@ class Commu:
         global BGcolor
         BGcolor = self.btCopia.get_style().copy().bg[gtk.STATE_NORMAL]
         
+    def muoviRighe(self, n):
+        R = int(self.Row())
+        lista = range(R)
+        if n > 0: lista.reverse()
+        for c in xrange(int(self.Col())):
+            for r in lista:
+                if r-n >= 0 and r-n < R:
+                    self.oggetto[(r, c)].set_nome(self.oggetto[(r-n, c)].nome())
+                else:
+                    self.oggetto[(r, c)].set_nome("")
+                self.oggetto[(r, c)].set_frecce(0, 0)
+
+        self.new_freccia = defaultdict(list)
+        for f in self.freccia.keys():
+            if f[0][0]+n >= 0 and f[0][0]+n < R and f[1][0]+n >= 0 and f[1][0]+n < R:
+                self.new_freccia[((f[0][0]+n, f[0][1]), (f[1][0]+n, f[1][1]))] = self.freccia[f]
+                self.oggetto[(f[0][0]+n, f[0][1])].incrementaFrecceInPartenza(len(self.freccia[f]))
+                self.oggetto[(f[1][0]+n, f[1][1])].incrementaFrecceInArrivo(len(self.freccia[f]))
+        self.freccia = self.new_freccia
+
+        if self.da != None and self.a != None:
+            self.oggetto[self.da].set_normale()
+            self.oggetto[self.a].set_normale()
+            if self.da[0]+n >= 0 and self.da[0]+n < R and self.a[0]+n >= 0 and self.a[0]+n < R:
+                self.da = (self.da[0]+n, self.da[1])
+                self.a = (self.a[0]+n, self.a[1])
+                self.oggetto[self.da].set_da()
+                self.oggetto[self.a].set_a()
+            else:
+                self.da = self.a = None
+
+    def muoviColonne(self, n):
+        C = int(self.Col())
+        lista = range(C)
+        if n > 0: lista.reverse()
+        for r in xrange(int(self.Row())):
+            for c in lista:
+                if c-n >= 0 and c-n < C:
+                    self.oggetto[(r, c)].set_nome(self.oggetto[(r, c-n)].nome())
+                else:
+                    self.oggetto[(r, c)].set_nome("")
+                self.oggetto[(r, c)].set_frecce(0, 0)
+
+        self.new_freccia = defaultdict(list)
+        for f in self.freccia.keys():
+            if f[0][1]+n >= 0 and f[0][1]+n < C and f[1][1]+n >= 0 and f[1][1]+n < C:
+                self.new_freccia[((f[0][0], f[0][1]+n), (f[1][0], f[1][1]+n))] = self.freccia[f]
+                self.oggetto[(f[0][0], f[0][1]+n)].incrementaFrecceInPartenza(len(self.freccia[f]))
+                self.oggetto[(f[1][0], f[1][1]+n)].incrementaFrecceInArrivo(len(self.freccia[f]))
+        self.freccia = self.new_freccia
+
+        if self.da != None and self.a != None:
+            self.oggetto[self.da].set_normale()
+            self.oggetto[self.a].set_normale()
+            if self.da[1]+n >= 0 and self.da[1]+n < C and self.a[1]+n >= 0 and self.a[1]+n < C:
+                self.da = (self.da[0], self.da[1]+n)
+                self.a = (self.a[0], self.a[1]+n)
+                self.oggetto[self.da].set_da()
+                self.oggetto[self.a].set_a()
+            else:
+                self.da = self.a = None
+
     def aggiustaTabella(self):
         R = int(self.Row())
         C = int(self.Col())
         oldR = self.curR
         oldC = self.curC
-        for i in xrange(oldR, R):
-            for j in xrange(0, C):
-                self.creaEntry(i, j)
-        for i in xrange(R, oldR):
-            for j in xrange(0, oldC):
-                self.delEntry(i,j)
-        for j in xrange(oldC, C):
-            for i in xrange(0, min(R, oldR)):
-                self.creaEntry(i, j)
-        for j in xrange(C, oldC):
-            for i in xrange(0, min(R, oldR)):
-                self.delEntry(i,j)
+        for r in xrange(oldR, R):
+            for c in xrange(0, C):
+                self.creaEntry(r, c)
+        for r in xrange(R, oldR):
+            for c in xrange(0, oldC):
+                self.delEntry(r, c)
+        for c in xrange(oldC, C):
+            for r in xrange(0, min(R, oldR)):
+                self.creaEntry(r, c)
+        for c in xrange(C, oldC):
+            for r in xrange(0, min(R, oldR)):
+                self.delEntry(r, c)
         self.table.resize(R, C)
-        for i in xrange(oldR, R):
-            for j in xrange(0, C):
-                self.table.attach(self.oggetto[(i,j)].box, i, i+1, j, j+1, 0, 0, 0, 0)
-                self.oggetto[(i,j)].box.show_all()
-        for j in xrange(oldC, C):
-            for i in xrange(0, min(R, oldR)):
-                self.table.attach(self.oggetto[(i,j)].box, i, i+1, j, j+1, 0, 0, 0, 0)
-                self.oggetto[(i,j)].box.show_all()
+        for r in xrange(oldR, R):
+            for c in xrange(0, C):
+                self.table.attach(self.oggetto[(r,c)].box, c, c+1, r, r+1, 0, 0, 0, 0)
+                self.oggetto[(r,c)].box.show_all()
+        for c in xrange(oldC, C):
+            for r in xrange(0, min(R, oldR)):
+                self.table.attach(self.oggetto[(r,c)].box, c, c+1, r, r+1, 0, 0, 0, 0)
+                self.oggetto[(r,c)].box.show_all()
         self.curR = R
         self.curC = C
 
@@ -315,6 +405,7 @@ class Commu:
             for f in self.freccia[(da,a)]:
                 self.boxFrecce.add(f.box)
         self.boxFrecce.show_all()
+        self.freccia[(da,a)][-1].focus()
         
     def Row(self):
         return self.spinRow.get_value()
@@ -322,6 +413,34 @@ class Commu:
     def Col(self):
         return self.spinCol.get_value()
 
+    def on_btNW_clicked(self, widget):
+        self.muoviRighe(-1)
+        self.muoviColonne(-1)
+    
+    def on_btN_clicked(self, widget):
+        self.muoviRighe(-1)
+    
+    def on_btNE_clicked(self, widget):
+        self.muoviRighe(-1)
+        self.muoviColonne(1)
+    
+    def on_btE_clicked(self, widget):
+        self.muoviColonne(1)
+    
+    def on_btSE_clicked(self, widget):
+        self.muoviRighe(1)
+        self.muoviColonne(1)
+    
+    def on_btS_clicked(self, widget):
+        self.muoviRighe(1)
+    
+    def on_btSW_clicked(self, widget):
+        self.muoviRighe(1)
+        self.muoviColonne(-1)
+    
+    def on_btW_clicked(self, widget):
+        self.muoviColonne(-1)
+    
     def on_spinRow_change_value(self, widget):
         self.aggiustaTabella()
     
@@ -384,18 +503,18 @@ class Commu:
         rientro = int(self.spinR.get_value())
         w = self.spinW.get_value()
         h = self.spinH.get_value()
-        s += " " * rientro + "\\begin{center}\n"
+        s += " " * rientro + "\\[\n"
         s += " " * rientro + "\\begin{tikzpicture}\n"
         s += " " * (rientro+2) + "\\def\\x{%.1f}\n" % w
         s += " " * (rientro+2) + "\\def\\y{%.1f}\n" % (-h)
-        
-        for i in xrange(R):
-            for j in xrange(C):
-                if self.oggetto[(i,j)].nome() != "" or (i,j) in [operator.itemgetter(0)(x) for x in self.freccia.keys()] or (i,j) in [operator.itemgetter(1)(x) for x in self.freccia.keys()]:
-                    if self.oggetto[(i,j)].nome() != "":
-                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d*\\x, %d*\\y) {$%s$};\n" % (i, j, i, j, self.oggetto[(i,j)].nome())
+
+        for r in xrange(R):
+            for c in xrange(C):
+                if self.oggetto[(r,c)].daScrivere():
+                    if self.oggetto[(r,c)].nome() != "":
+                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d*\\x, %d*\\y) {$%s$};\n" % (r, c, c, r, self.oggetto[(r,c)].nome())
                     else:
-                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d*\\x, %d*\\y) {};\n" % (i, j, i, j)
+                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d*\\x, %d*\\y) {};\n" % (r, c, c, r)
 
         for direzione in self.freccia.keys():
             for f in self.freccia[direzione]:
@@ -432,9 +551,16 @@ class Commu:
                 s += "(A%d_%d);\n" % (a[0], a[1])
             
         s += " " * rientro + "\\end{tikzpicture}\n"
-        s += " " * rientro + "\\end{center}\n"
+        s += " " * rientro + "\\]\n"
         c = gtk.Clipboard()
         c.set_text(s)
+
+    def on_btImport_clicked(self, widget):
+        c = gtk.Clipboard()
+        s = c.wait_for_text().split('\n')
+        rientro = len(s[0]) - 2
+        #TODO
+        
 
     def on_ok_clicked(self, widget):
         self.curFreccia.set(coda = self.coda.get_active(), tratto = self.tratto.get_active(), decorazione = self.decorazione.get_active(), testa = self.testa.get_active())
