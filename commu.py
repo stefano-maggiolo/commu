@@ -114,7 +114,10 @@ class Oggetto:
         self.coll.modify_bg(gtk.STATE_NORMAL, green)       
 
     def set_normale(self):
-        self.coll.modify_bg(gtk.STATE_NORMAL, BGcolor)       
+        self.coll.modify_bg(gtk.STATE_NORMAL, BGcolor)
+
+    def is_empty(self):
+        return self.frecceInPartenza == 0 and self.frecceInArrivo == 0 and self.nome() == ""
         
 class Freccia:
     def __init__(self):
@@ -404,8 +407,8 @@ class Commu:
         if da != None and a != None:
             for f in self.freccia[(da,a)]:
                 self.boxFrecce.add(f.box)
-        self.boxFrecce.show_all()
-        self.freccia[(da,a)][-1].focus()
+            self.boxFrecce.show_all()
+            self.freccia[(da,a)][-1].focus()
         
     def Row(self):
         return self.spinRow.get_value()
@@ -413,33 +416,78 @@ class Commu:
     def Col(self):
         return self.spinCol.get_value()
 
+    def ask_loss_information(self):
+        msgbox = gtk.MessageDialog(parent = None,
+                                   buttons = gtk.BUTTONS_YES_NO,
+                                   flags = gtk.DIALOG_MODAL,
+                                   message_format = "This will delete some data you have inserted. Continue?",
+                                   type = gtk.MESSAGE_QUESTION)
+        msgbox.set_title("Alert")
+        result = msgbox.run()
+        msgbox.destroy()
+        return result == gtk.RESPONSE_YES
+
+    def empty_N(self):
+        for i in xrange(int(self.Col())):
+            if not self.oggetto[(0, i)].is_empty():
+                return False
+        return True
+    
+    def empty_S(self):
+        R = int(self.Row())
+        for i in xrange(int(self.Col())):
+            if not self.oggetto[(R-1, i)].is_empty():
+                return False
+        return True
+
+    def empty_W(self):
+        for i in xrange(int(self.Row())):
+            if not self.oggetto[(i, 0)].is_empty():
+                return False
+        return True
+    
+    def empty_E(self):
+        C = int(self.Col())
+        for i in xrange(int(self.Row())):
+            if not self.oggetto[(i, C-1)].is_empty():
+                return False
+        return True
+
     def on_btNW_clicked(self, widget):
-        self.muoviRighe(-1)
-        self.muoviColonne(-1)
+        if (self.empty_N() and self.empty_W()) or self.ask_loss_information():
+            self.muoviRighe(-1)
+            self.muoviColonne(-1)
     
     def on_btN_clicked(self, widget):
-        self.muoviRighe(-1)
+        if self.empty_N() or self.ask_loss_information():
+            self.muoviRighe(-1)
     
     def on_btNE_clicked(self, widget):
-        self.muoviRighe(-1)
-        self.muoviColonne(1)
+        if (self.empty_N() and self.empty_E()) or self.ask_loss_information():
+            self.muoviRighe(-1)
+            self.muoviColonne(1)
     
     def on_btE_clicked(self, widget):
-        self.muoviColonne(1)
+        if self.empty_E() or self.ask_loss_information():
+            self.muoviColonne(1)
     
     def on_btSE_clicked(self, widget):
-        self.muoviRighe(1)
-        self.muoviColonne(1)
+        if (self.empty_S() and self.empty_E()) or self.ask_loss_information():
+            self.muoviRighe(1)
+            self.muoviColonne(1)
     
     def on_btS_clicked(self, widget):
-        self.muoviRighe(1)
+        if self.empty_S() or self.ask_loss_information():
+            self.muoviRighe(1)
     
     def on_btSW_clicked(self, widget):
-        self.muoviRighe(1)
-        self.muoviColonne(-1)
+        if (self.empty_S() and self.empty_W()) or self.ask_loss_information():
+            self.muoviRighe(1)
+            self.muoviColonne(-1)
     
     def on_btW_clicked(self, widget):
-        self.muoviColonne(-1)
+        if self.empty_W() or self.ask_loss_information():
+            self.muoviColonne(-1)
     
     def on_spinRow_change_value(self, widget):
         self.aggiustaTabella()
