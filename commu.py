@@ -274,6 +274,13 @@ class Commu:
         self.aggiustaTabella()
 
         self.a = self.da = None
+
+        accelgroup = gtk.AccelGroup()
+        accelgroup.connect_group(ord('Q'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.window.destroy())
+        accelgroup.connect_group(ord('R'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.on_btReset_clicked(None))
+        self.window.add_accel_group(accelgroup)
         
         self.window.show()
         global BGcolor
