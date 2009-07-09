@@ -15,7 +15,7 @@
 
 #Create commutative diagrams with PGF/TikZ.
 #Version: 20080916
-#Author: Stefano Maggiolo <maggiolo@mail.dm.unipi.it>
+#Author: Stefano Maggiolo <s.maggiolo@gmail.com>
 
 #Potential TODO:
 #- clean up code (to english);
@@ -559,17 +559,15 @@ class Commu:
         w = self.spinW.get_value()
         h = self.spinH.get_value()
         s += " " * rientro + "\\[\n"
-        s += " " * rientro + "\\begin{tikzpicture}\n"
-        s += " " * (rientro+2) + "\\def\\x{%.1f}\n" % w
-        s += " " * (rientro+2) + "\\def\\y{%.1f}\n" % (-h)
+        s += " " * rientro + "\\begin{tikzpicture}[xscale=%.1f,yscale=%.1f]\n" % (w, -h)
 
         for r in xrange(R):
             for c in xrange(C):
                 if self.oggetto[(r,c)].daScrivere():
                     if self.oggetto[(r,c)].nome() != "":
-                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d*\\x, %d*\\y) {$%s$};\n" % (r, c, c, r, self.oggetto[(r,c)].nome())
+                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d, %d) {$%s$};\n" % (r, c, c, r, self.oggetto[(r,c)].nome())
                     else:
-                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d*\\x, %d*\\y) {};\n" % (r, c, c, r)
+                        s += " " * (rientro+2) + "\\node (A%d_%d) at (%d, %d) {};\n" % (r, c, c, r)
 
         for direzione in self.freccia.keys():
             for f in self.freccia[direzione]:
