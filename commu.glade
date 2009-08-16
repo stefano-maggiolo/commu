@@ -5,7 +5,7 @@
   <widget class="GtkWindow" id="window">
     <property name="border_width">10</property>
     <property name="resizable">False</property>
-    <property name="icon">commu.png</property>
+    <property name="icon">/usr/share/commu/commu.svg</property>
     <signal name="destroy" handler="on_window_destroy"/>
     <child>
       <widget class="GtkVBox" id="vbox1">
@@ -415,7 +415,7 @@
     <property name="border_width">10</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
-    <property name="icon">commu.png</property>
+    <property name="icon">/usr/share/commu/commu.svg</property>
     <child>
       <widget class="GtkVBox" id="vbox2">
         <property name="visible">True</property>

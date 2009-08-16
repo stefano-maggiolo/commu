@@ -216,9 +216,15 @@ class Freccia:
             
 class Commu:
     def __init__(self):
-        self.gladefile = os.path.join(os.path.dirname(__file__), "commu.glade")
-        self.w = gtk.glade.XML(self.gladefile) 
-        
+        try:
+            self.gladefile = os.path.join("/", "usr", "share", "commu", "commu.glade")
+            self.w = gtk.glade.XML(self.gladefile)
+        except:
+            # Assume all files are in the source directory
+            self.gladefile = os.path.join(os.path.dirname(__file__), "commu.glade")
+            self.w = gtk.glade.XML(self.gladefile)
+            self.w.get_widget("window").set_icon(gtk.gdk.pixbuf_new_from_file("commu.svg"))
+
         dic = {"on_window_destroy": gtk.main_quit,
                "on_spinRow_value_changed": self.on_spinRow_change_value,
                "on_spinCol_value_changed": self.on_spinCol_change_value,
