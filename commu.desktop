@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Commu
+GenericName=Diagram drawer
+GenericName[en_US]=Diagram drawer
+GenericName[it]=Disegnatore di diagrammi
+Comment=Draw commutative diagrams with PGF/TikZ
+Comment[it]=Disegna diagrammi commutativi con PGF/TikZ
+Exec=commu
+Icon=/usr/share/commu/commu.svg
+Type=Application
+Categories=GNOME;Application;Education;
+

@@ -1,0 +1,14 @@
+Version 2009.07.10
+* Deb and RPM packages thanks to Py2deb!
+* Using xscale and yscale instead of multiplications: should suppress come warnings.
+* New, not shiny, icon.
+* Now in your menu with .desktop file.
+
+Version 2008.12.19
+* Fix a warning for GtkSpinButton.
+* Fix a bug occurring on resizing the table without selected cells.
+* Ask when moving the diagram out of the table.
+
+Version 2008.09.16
+* First public release.
+            
