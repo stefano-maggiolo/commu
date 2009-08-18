@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from py2deb import Py2deb
 
-version="2009.07.10"
+version="2009.08.18"
 changelog=open("changelog.txt","r").read()
 
 p = Py2deb("commu")
@@ -10,11 +10,12 @@ p.mail = "s.maggiolo@gmail.com"
 p.description = "Draw commutative diagrams for LaTeX with PGF/TikZ"
 p.url = "http://poisson.phc.unipi.it/~maggiolo/index.php/tag/commu/"
 p.depends = "python-gtk2, python-glade2"
-p.recommends = "pgf"
+p.recommends = "pgf, python-poppler"
 p.license = "gpl"
 p.section = "tex"
 
-p["/usr/bin"] = ["commu.py|commu",]
+p["/usr/bin"] = ["commu.py|commu"]
+p["/usr/share/python-support/commu/commu"] = ["commu_main.py", "commu_conf.py", "commu_objects.py", "commu_preview.py"]
 p["/usr/share/commu"] = ["commu.svg", "commu.glade"]
 p["/usr/share/applications"] = ["commu.desktop"]
 p.generate(version, changelog, rpm = True, src = True)

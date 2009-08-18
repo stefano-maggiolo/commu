@@ -1,3 +1,7 @@
+Version 2009.08.18
+* Preview, with python-poppler (thanks to Fabio Tonini for most part of the work).
+* Automatical update of the preview (very rough).
+
 Version 2009.07.10
 * Deb and RPM packages thanks to Py2deb!
 * Using xscale and yscale instead of multiplications: should suppress come warnings.

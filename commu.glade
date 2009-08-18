@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.5 on Fri Dec 19 10:23:57 2008 -->
+<?xml version="1.0"?>
 <glade-interface>
+  <!-- interface-requires gtk+ 2.16 -->
+  <!-- interface-naming-policy toplevel-contextual -->
   <widget class="GtkWindow" id="window">
     <property name="border_width">10</property>
     <property name="resizable">False</property>
@@ -19,20 +19,19 @@
             <property name="spacing">5</property>
             <child>
               <widget class="GtkButton" id="btReset">
+                <property name="label" translatable="yes">Reset</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Clear the diagram.</property>
-                <property name="label" translatable="yes">Reset</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btReset_clicked"/>
               </widget>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -52,7 +51,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="events">GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_MOTION_MASK | GDK_BUTTON1_MOTION_MASK | GDK_BUTTON2_MOTION_MASK | GDK_BUTTON3_MOTION_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_FOCUS_CHANGE_MASK | GDK_STRUCTURE_MASK | GDK_PROPERTY_CHANGE_MASK | GDK_VISIBILITY_NOTIFY_MASK | GDK_PROXIMITY_IN_MASK | GDK_PROXIMITY_OUT_MASK | GDK_SUBSTRUCTURE_MASK | GDK_SCROLL_MASK</property>
-                <property name="tooltip_text">Number of columns in the diagram</property>
                 <property name="adjustment">2 1 10 1 0 0</property>
                 <signal name="value_changed" handler="on_spinRow_value_changed"/>
               </widget>
@@ -79,7 +77,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Number of rows in the diagram.</property>
                 <property name="adjustment">2 1 10 1 0 0</property>
                 <signal name="value_changed" handler="on_spinCol_value_changed"/>
               </widget>
@@ -91,15 +88,13 @@
             </child>
             <child>
               <widget class="GtkButton" id="btNuova">
+                <property name="label" translatable="yes">New arrow</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Create new arrow from the red object to the green object.</property>
-                <property name="label" translatable="yes">New arrow</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btNuova_clicked"/>
               </widget>
               <packing>
@@ -110,15 +105,13 @@
             </child>
             <child>
               <widget class="GtkButton" id="btCopia">
+                <property name="label" translatable="yes">Copy</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Copy the diagram in the clipboard</property>
-                <property name="label" translatable="yes">Copy</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btCopia_clicked"/>
               </widget>
               <packing>
@@ -129,14 +122,12 @@
             </child>
             <child>
               <widget class="GtkButton" id="btImport">
+                <property name="label" translatable="yes">Import</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Copy the diagram in the clipboard</property>
-                <property name="label" translatable="yes">Import</property>
-                <property name="response_id">0</property>
               </widget>
               <packing>
                 <property name="expand">False</property>
@@ -144,10 +135,28 @@
                 <property name="position">7</property>
               </packing>
             </child>
+            <child>
+              <widget class="GtkButton" id="btPreview">
+                <property name="label" translatable="yes">Preview</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="can_default">True</property>
+                <property name="has_default">True</property>
+                <property name="receives_default">True</property>
+                <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
+                <signal name="clicked" handler="on_btPreview_clicked"/>
+              </widget>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">8</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
@@ -164,6 +173,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -171,7 +181,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Horizontal distance between two objects, in cm.</property>
                 <property name="adjustment">1.4999999999999996 0.10000000000000001 10 0.10000000000000001 0 0</property>
                 <property name="digits">1</property>
               </widget>
@@ -198,7 +207,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Vertical distance between two objects, in cm.</property>
                 <property name="adjustment">1.1999999999999993 0.10000000000000001 10 0.10000000000000001 0 0</property>
                 <property name="digits">1</property>
               </widget>
@@ -225,7 +233,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-                <property name="tooltip_text">Left margin of the text copied, in chars.</property>
                 <property name="adjustment">2 0 10 1 0 0</property>
               </widget>
               <packing>
@@ -249,11 +256,11 @@
             <property name="n_columns">3</property>
             <child>
               <widget class="GtkButton" id="btS">
+                <property name="label" translatable="yes">&#x2193;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">↓</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btS_clicked"/>
               </widget>
               <packing>
@@ -266,11 +273,11 @@
             </child>
             <child>
               <widget class="GtkButton" id="btSE">
+                <property name="label" translatable="yes">&#x2198;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">↘</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btSE_clicked"/>
               </widget>
               <packing>
@@ -284,11 +291,11 @@
             </child>
             <child>
               <widget class="GtkButton" id="btE">
+                <property name="label" translatable="yes">&#x2192;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">→</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btE_clicked"/>
               </widget>
               <packing>
@@ -301,11 +308,11 @@
             </child>
             <child>
               <widget class="GtkButton" id="btNE">
+                <property name="label" translatable="yes">&#x2197;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">↗</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btNE_clicked"/>
               </widget>
               <packing>
@@ -317,11 +324,11 @@
             </child>
             <child>
               <widget class="GtkButton" id="btN">
+                <property name="label" translatable="yes">&#x2191;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">↑</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btN_clicked"/>
               </widget>
               <packing>
@@ -332,11 +339,11 @@
             </child>
             <child>
               <widget class="GtkButton" id="btSW">
+                <property name="label" translatable="yes">&#x2199;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">↙</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btSW_clicked"/>
               </widget>
               <packing>
@@ -348,11 +355,11 @@
             </child>
             <child>
               <widget class="GtkButton" id="btW">
+                <property name="label" translatable="yes">&#x2190;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">←</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btW_clicked"/>
               </widget>
               <packing>
@@ -363,11 +370,11 @@
             </child>
             <child>
               <widget class="GtkButton" id="btNW">
+                <property name="label" translatable="yes">&#x2196;</property>
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="receives_default">True</property>
-                <property name="label" translatable="yes">↖</property>
                 <property name="focus_on_click">False</property>
-                <property name="response_id">0</property>
                 <signal name="clicked" handler="on_btNW_clicked"/>
               </widget>
               <packing>
@@ -537,19 +544,19 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
+            <property name="position">0</property>
           </packing>
         </child>
         <child>
           <widget class="GtkButton" id="ok">
+            <property name="label" translatable="yes">gtk-ok</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="can_default">True</property>
             <property name="has_default">True</property>
             <property name="receives_default">True</property>
             <property name="events">GDK_POINTER_MOTION_MASK | GDK_POINTER_MOTION_HINT_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK</property>
-            <property name="label" translatable="yes">gtk-ok</property>
             <property name="use_stock">True</property>
-            <property name="response_id">0</property>
             <signal name="clicked" handler="on_ok_clicked"/>
           </widget>
           <packing>
