@@ -20,8 +20,10 @@ Author: Stefano Maggiolo <s.maggiolo@gmail.com>
 """
 
 import gtk
+import sys
 
 if __name__ == "__main__":
+    sys.path.append('/usr/share/python-support/commu/commu')
     import commu_main
     try:
         import poppler
