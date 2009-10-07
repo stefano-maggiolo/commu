@@ -19,7 +19,6 @@ import gtk
 import gtk.glade
 import gobject
 import operator
-from collections import defaultdict
 import os
 import poppler
 import commands
@@ -244,7 +243,7 @@ theory of ultrafilters."
         tmp.close()
         
         try:
-            command = "TEXINPUTS=\".::%s:%s\"  pdflatex -interaction nonstopmode -output-directory %s %s" % (
+            command = "TEXINPUTS=\"$TEXINPUTS:.::%s:%s\"  pdflatex -interaction nonstopmode -output-directory %s %s" % (
                 self.tempDir,
                 os.path.dirname(os.path.realpath(self.commuPackages + ".tex")),
                 self.tempDir,

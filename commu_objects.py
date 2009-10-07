@@ -19,7 +19,6 @@ import gtk
 import gtk.glade
 import gobject
 import operator
-from collections import defaultdict
 import os
 
 from commu_conf import *

@@ -1,4 +1,8 @@
-Version 2009.08.18
+Version 2009.10.07
+* Don't use defaultdict (useful for old platforms).
+* Don't overwrite TEXINPUTS, but join with the old one.
+
+Version 2009.09.07
 * Preview, with python-poppler (thanks to Fabio Tonini for most part of the work).
 * Automatical update of the preview (very rough).
 

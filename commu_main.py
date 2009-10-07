@@ -32,7 +32,6 @@ import gtk
 import gtk.glade
 import gobject
 import operator
-from collections import defaultdict
 import os
 
 from commu_conf import *
@@ -83,7 +82,7 @@ class Commu:
         self.window = self.w.get_widget("window")        
 
         self.objects = {}
-        self.arrows = defaultdict(list)
+        self.arrows = {}
 
         self.chiedi = self.w.get_widget("chiedi")
         self.ok = self.w.get_widget("ok")
@@ -153,7 +152,7 @@ class Commu:
                     self.objects[(r, c)].SetName("")
                 self.objects[(r, c)].SetArrows(0, 0)
 
-        self.newArrow = defaultdict(list)
+        self.newArrow = {}
         for f in self.arrows.keys():
             if f[0][0]+n >= 0 and f[0][0]+n < R and f[1][0]+n >= 0 and f[1][0]+n < R:
                 self.newArrow[((f[0][0]+n, f[0][1]), (f[1][0]+n, f[1][1]))] = self.arrows[f]
@@ -184,7 +183,7 @@ class Commu:
                     self.objects[(r, c)].SetName("")
                 self.objects[(r, c)].SetArrows(0, 0)
 
-        self.newArrow = defaultdict(list)
+        self.newArrow = {}
         for f in self.arrows.keys():
             if f[0][1]+n >= 0 and f[0][1]+n < C and f[1][1]+n >= 0 and f[1][1]+n < C:
                 self.newArrow[((f[0][0], f[0][1]+n), (f[1][0], f[1][1]+n))] = self.arrows[f]
@@ -258,6 +257,8 @@ class Commu:
 
     def creaArrows(self, _from, _to):
         f = Arrow(self.Tooltip)
+        if (_from, _to) not in self.arrows.keys():
+            self.arrows[(_from, _to)] = []
         self.arrows[(_from, _to)].append(f)
         f.canc.connect("clicked", self.on_canc_clicked, f)
         f.preset.connect("changed", self.on_preset_changed, f)
@@ -268,10 +269,12 @@ class Commu:
     def ShowFromTo(self, _from, _to):
         self.boxFrecce.foreach(lambda w: self.boxFrecce.remove(w))
         if _from != None and _to != None:
-            for f in self.arrows[(_from, _to)]:
-                self.boxFrecce.add(f.box)
+            if (_from, _to) in self.arrows.keys():
+                for f in self.arrows[(_from, _to)]:
+                    self.boxFrecce.add(f.box)
             self.boxFrecce.show_all()
-            if self.arrows[(_from, _to)] != []:
+            if (_from, _to) in self.arrows.keys() and \
+                    self.arrows[(_from, _to)] != []:
                 self.arrows[(_from, _to)][-1].focus()
         
     def Row(self):
@@ -368,7 +371,8 @@ class Commu:
         if self._to != None and self._from != self._to: self.objects[self._to].SetNormal(self.BGcolor)
         self._to = data
         self.objects[self._to].SetTo()
-        if self.arrows[(self._from, self._to)] == []:
+        if (self._from, self._to) not in self.arrows.keys() or \
+                self.arrows[(self._from, self._to)] == []:
             self.creaArrows(self._from, self._to)
         self.ShowFromTo(self._from, self._to)
 
@@ -376,7 +380,7 @@ class Commu:
         if self._to != None: self.objects[self._to].SetNormal(self.BGcolor)
         if self._from != None: self.objects[self._from].SetNormal(self.BGcolor)
         self._to = self._from = None
-        self.arrows = defaultdict(list)
+        self.arrows = {}
         self.objects[(0,0)].Reset()
         self.spinCol.set_value(0.0)
         self.spinRow.set_value(0.0)
