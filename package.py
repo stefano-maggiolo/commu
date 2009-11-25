@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from py2deb import Py2deb
 
-version="2009.10.07"
+version="2009.11.25"
 changelog=open("changelog.txt","r").read()
 
 p = Py2deb("commu")

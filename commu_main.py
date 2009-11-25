@@ -99,6 +99,7 @@ class Commu:
         for x in TESTA:
             self.testa.append_text(x)
 
+        self.previousFocus = (0,0)
         self.curR = 0
         self.curC = 0
         self.AdjustTable()
@@ -112,6 +113,14 @@ class Commu:
                                  lambda *etc: self.on_btReset_clicked(None))
         accelgroup.connect_group(ord('P'), gtk.gdk.CONTROL_MASK, 0,
                                  lambda *etc: self.on_btPreview_clicked(None))
+        accelgroup.connect_group(ord('A'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.arrow_left())
+        accelgroup.connect_group(ord('S'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.arrow_down())
+        accelgroup.connect_group(ord('W'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.arrow_up())
+        accelgroup.connect_group(ord('D'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.arrow_right())
         self.window.add_accel_group(accelgroup)
 
         # Manage preview
@@ -203,6 +212,9 @@ class Commu:
                 self._from = self._to = None
 
     def AdjustTable(self):
+        for o in self.objects.keys():
+            if self.objects[o].label.is_focus():
+                self.previousFocus = newo 
         R = int(self.Row())
         C = int(self.Col())
         oldR = self.curR
@@ -231,6 +243,7 @@ class Commu:
         self.table.get_children()[-1].get_children()[0].grab_focus()
         self.curR = R
         self.curC = C
+        self.objects[self.previousFocus].label.grab_focus()
 
     def NewEntry(self, i, j):
         o = Object(self.Tooltip)
@@ -417,6 +430,64 @@ class Commu:
             self.preview.Preview(self.Build())
             self.window.present()
 
+    def arrow_left(self):
+        for o in self.objects.keys():
+            if self.objects[o].label.is_focus():
+                if o[1] > 0:
+                    newo = (o[0], o[1]-1)
+                    self.previousFocus = newo 
+                    self.on_entry_drag_data_get(self, None, None,
+                                                None, None, o)
+                    self.on_entry_drag_data_received(self, None, None,
+                                                     None, None, None,
+                                                     None, newo)
+                    return
+        self.objects[self.previousFocus].label.grab_focus()
+
+    def arrow_right(self):
+        for o in self.objects.keys():
+            if self.objects[o].label.is_focus():
+                if o[1] < self.curC-1:
+                    newo = (o[0], o[1]+1)
+                    self.previousFocus = newo
+                    self.on_entry_drag_data_get(self, None, None,
+                                                None, None, o)
+                    self.on_entry_drag_data_received(self, None, None,
+                                                     None, None, None,
+                                                     None, newo)
+                    return
+        self.objects[self.previousFocus].label.grab_focus()
+
+    def arrow_up(self):
+        for o in self.objects.keys():
+            if self.objects[o].label.is_focus():
+                if o[0] > 0:
+                    newo = (o[0]-1, o[1])
+                    self.previousFocus = newo 
+                    self.on_entry_drag_data_get(self, None, None,
+                                                None, None, o)
+                    self.on_entry_drag_data_received(self, None, None,
+                                                     None, None, None,
+                                                     None, newo)
+                    return
+        self.objects[self.previousFocus].label.grab_focus()
+
+    def arrow_down(self):
+        for o in self.objects.keys():
+            if self.objects[o].label.is_focus():
+                if o[0] < self.curR-1:
+                    newo = (o[0]+1, o[1])
+                    self.previousFocus = newo 
+                    self.on_entry_drag_data_get(self, None, None,
+                                                None, None, o)
+                    self.on_entry_drag_data_received(self, None, None,
+                                                     None, None, None,
+                                                     None, newo)
+                    return
+        self.objects[self.previousFocus].label.grab_focus()
+
+    
+                    
     def Build(self):
         s = ""
         R = self.curR

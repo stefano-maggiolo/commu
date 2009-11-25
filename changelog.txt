@@ -1,3 +1,6 @@
+Version 2009.11.25
+* Keybindings to make arrows to the nearest cells.
+
 Version 2009.10.07
 * Don't use defaultdict (useful for old platforms).
 * Don't overwrite TEXINPUTS, but join with the old one.
