@@ -111,6 +111,8 @@ class Arrow:
         self.tooltip.set_tip(self.inarc, "Arrow curve, in degree.")
         self.canc = gtk.Button("Delete")
         self.tooltip.set_tip(self.canc, "Delete the arrow.")
+        self.add = gtk.Button("Add arrow")
+        self.tooltip.set_tip(self.canc, "Add another arrow.")
         
         self.inarc.set_increments(5, 30)
         self.inarc.set_range(-180, 180)
@@ -127,6 +129,7 @@ class Arrow:
         self.box.pack_start(self.preset, False, False)
         self.box.pack_start(self.inarc, False, False)
         self.box.pack_start(self.canc, False, False)
+        self.box.pack_start(self.add, False, False)
 
         self.set()
 

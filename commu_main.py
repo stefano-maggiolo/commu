@@ -53,7 +53,6 @@ class Commu:
                "on_spinCol_value_changed": self.on_spinCol_change_value,
                "on_btCopia_clicked": self.on_btCopia_clicked,
                "on_btReset_clicked": self.on_btReset_clicked,
-               "on_btNuova_clicked": self.on_btNuova_clicked,
                "on_btImport_clicked": self.on_btImport_clicked,
                "on_btNW_clicked": self.on_btNW_clicked,
                "on_btN_clicked": self.on_btN_clicked,
@@ -214,7 +213,7 @@ class Commu:
     def AdjustTable(self):
         for o in self.objects.keys():
             if self.objects[o].label.is_focus():
-                self.previousFocus = newo 
+                self.previousFocus = o 
         R = int(self.Row())
         C = int(self.Col())
         oldR = self.curR
@@ -274,6 +273,7 @@ class Commu:
             self.arrows[(_from, _to)] = []
         self.arrows[(_from, _to)].append(f)
         f.canc.connect("clicked", self.on_canc_clicked, f)
+        f.add.connect("clicked", self.on_add_clicked, f)
         f.preset.connect("changed", self.on_preset_changed, f)
         self.objects[self._from].IncrementOutgoingArrows()
         self.objects[self._to].IncrementIncomingArrows()
@@ -403,7 +403,7 @@ class Commu:
         self.AdjustTable()
         self.ShowFromTo(None, None)
 
-    def on_btNuova_clicked(self, widget):
+    def on_add_clicked(self, widget, data):
         if self._from != None and self._to != None:
             self.creaArrows(self._from, self._to)
 

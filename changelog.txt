@@ -1,5 +1,6 @@
 Version 2009.11.25
 * Keybindings to make arrows to the nearest cells.
+* New arrow button on the arrowm not global.
 
 Version 2009.10.07
 * Don't use defaultdict (useful for old platforms).

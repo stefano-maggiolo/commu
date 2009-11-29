@@ -91,12 +91,11 @@ theory of ultrafilters."
         lab = gtk.Label('Scale:')
 
         button = gtk.Button("Close")
-        button.connect("clicked", self.DeleteHelpWindow)
+        button.connect("clicked", self.DeletePreviewWindow)
 
         hbox.pack_start(lab, False, False, 4)
         hbox.pack_start(scale_selector, False, False, 0)
-        hbox.pack_start(gtk.Label(""))
-        hbox.pack_start(button, expand = False, fill = False)
+        hbox.pack_end(button, expand = False, fill = False)
 
         sw = gtk.ScrolledWindow()
         sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -150,8 +149,7 @@ theory of ultrafilters."
 
         hbox = gtk.HBox()
         hbox.set_spacing(6)
-        hbox.pack_start(gtk.Label(""))
-        hbox.pack_start(button, expand = False, fill = False)
+        hbox.pack_end(button, expand = False, fill = False)
 
         vbox = gtk.VBox()
         vbox.set_spacing(6)
@@ -378,8 +376,7 @@ theory of ultrafilters."
         hbox = gtk.HBox()
         hbox.set_spacing(6)
         hbox.pack_start(check, expand = False, fill = False)
-        hbox.pack_start(gtk.Label(""))
-        hbox.pack_start(button, expand = False, fill = False)
+        hbox.pack_end(button, expand = False, fill = False)
         
         vbox = gtk.VBox()
         vbox.set_spacing(6)
