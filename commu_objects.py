@@ -26,7 +26,7 @@ from commu_conf import *
 class Object:
     def __init__(self, tooltip):
         self.tooltip = tooltip
-        
+
         self.label = gtk.Entry()
         tooltip.set_tip(self.label, "Drop here to create an arrow to this object.")
         self.box = gtk.HBox()
@@ -48,7 +48,7 @@ class Object:
     def IncrementIncomingArrows(self, n = 1):
         self.incomingArrows += n
         self.coll.set_label("%d / %d" % (self.outgoingArrows, self.incomingArrows))
-        
+
     def DecrementIncomingArrows(self, n = 1):
         self.incomingArrows -= n
         self.coll.set_label("%d / %d" % (self.outgoingArrows, self.incomingArrows))
@@ -78,25 +78,25 @@ class Object:
     def SetArrows(self, outgoingArrows, incomingArrows):
         self.outgoingArrows = outgoingArrows
         self.incomingArrows = incomingArrows
-        self.coll.set_label("%d / %d" % (self.outgoingArrows, self.incomingArrows))        
-        
+        self.coll.set_label("%d / %d" % (self.outgoingArrows, self.incomingArrows))
+
     def ToWrite(self):
         return self.Name() != "" or self.outgoingArrows != 0 or self.incomingArrows != 0
-    
+
     def SetFrom(self):
-        red = gtk.gdk.color_parse("red")        
+        red = gtk.gdk.color_parse("red")
         self.coll.modify_bg(gtk.STATE_NORMAL, red)
-        
+
     def SetTo(self):
         green = gtk.gdk.color_parse("green")
-        self.coll.modify_bg(gtk.STATE_NORMAL, green)       
+        self.coll.modify_bg(gtk.STATE_NORMAL, green)
 
     def SetNormal(self, color):
         self.coll.modify_bg(gtk.STATE_NORMAL, color)
 
     def isEmpty(self):
         return self.outgoingArrows == 0 and self.incomingArrows == 0 and self.Name() == ""
-        
+
 class Arrow:
     def __init__(self, tooltip):
         self.tooltip = tooltip
@@ -113,7 +113,7 @@ class Arrow:
         self.tooltip.set_tip(self.canc, "Delete the arrow.")
         self.add = gtk.Button("Add arrow")
         self.tooltip.set_tip(self.canc, "Add another arrow.")
-        
+
         self.inarc.set_increments(5, 30)
         self.inarc.set_range(-180, 180)
         for x in SCRITTA:
@@ -142,7 +142,7 @@ class Arrow:
 
     def focus(self):
         self.funz.grab_focus()
-        
+
     def funzione(self):
         return self.funz.get_text()
 

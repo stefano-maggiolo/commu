@@ -1,6 +1,14 @@
-Version 2009.11.25
-* Keybindings to make arrows to the nearest cells.
-* New arrow button on the arrowm not global.
+Version 2010.11.26
+* Fixed the preview when using external definitions.
+
+Version 2010.09.12
+* Better "equal" arrow.
+
+Version 2009.12.02
+* Added buttons to add and remove rows and columns (instead of spinbuttons).
+* Keybindings to make arrows to the nearest cells (and expand cells).
+* New arrow button on the arrows, not global anymore.
+* Reworked the preview system.
 
 Version 2009.10.07
 * Don't use defaultdict (useful for old platforms).
@@ -23,4 +31,3 @@ Version 2008.12.19
 
 Version 2008.09.16
 * First public release.
-            

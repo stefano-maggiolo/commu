@@ -13,10 +13,6 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#Create commutative diagrams with PGF/TikZ.
-#Version: 20080916
-#Author: Stefano Maggiolo <s.maggiolo@gmail.com>
-
 #Potential TODO:
 #- clean up code (to english);
 #- import of a diagram copied from the program;
@@ -36,7 +32,7 @@ import os
 
 from commu_conf import *
 from commu_objects import *
-    
+
 class Commu:
     def __init__(self, preview = "False"):
         try:
@@ -49,19 +45,25 @@ class Commu:
             self.w.get_widget("window").set_icon(gtk.gdk.pixbuf_new_from_file("commu.svg"))
 
         dic = {"on_window_destroy": self.on_close,
-               "on_spinRow_value_changed": self.on_spinRow_change_value,
-               "on_spinCol_value_changed": self.on_spinCol_change_value,
-               "on_btCopia_clicked": self.on_btCopia_clicked,
+               "on_btExport_clicked": self.on_btExport_clicked,
                "on_btReset_clicked": self.on_btReset_clicked,
                "on_btImport_clicked": self.on_btImport_clicked,
                "on_btNW_clicked": self.on_btNW_clicked,
                "on_btN_clicked": self.on_btN_clicked,
+               "on_btN_P_clicked": self.on_btN_P_clicked,
+               "on_btN_M_clicked": self.on_btN_M_clicked,
                "on_btNE_clicked": self.on_btNE_clicked,
                "on_btE_clicked": self.on_btE_clicked,
+               "on_btE_P_clicked": self.on_btE_P_clicked,
+               "on_btE_M_clicked": self.on_btE_M_clicked,
                "on_btSE_clicked": self.on_btSE_clicked,
                "on_btS_clicked": self.on_btS_clicked,
+               "on_btS_P_clicked": self.on_btS_P_clicked,
+               "on_btS_M_clicked": self.on_btS_M_clicked,
                "on_btSW_clicked": self.on_btSW_clicked,
                "on_btW_clicked": self.on_btW_clicked,
+               "on_btW_P_clicked": self.on_btW_P_clicked,
+               "on_btW_M_clicked": self.on_btW_M_clicked,
                "on_ok_clicked": self.on_ok_clicked,
                "on_btPreview_clicked": self.on_btPreview_clicked
                }
@@ -70,18 +72,13 @@ class Commu:
 
         self.Tooltip = gtk.Tooltips()
 
-        self.spinRow = self.w.get_widget("spinRow")
-        self.spinCol = self.w.get_widget("spinCol")
         self.spinW = self.w.get_widget("spinW")
         self.spinH = self.w.get_widget("spinH")
         self.spinR = self.w.get_widget("spinR")
-        self.btCopia = self.w.get_widget("btCopia")
+        self.btExport = self.w.get_widget("btExport")
         self.table = self.w.get_widget("table")
         self.boxFrecce = self.w.get_widget("boxFrecce")
-        self.window = self.w.get_widget("window")        
-
-        self.objects = {}
-        self.arrows = {}
+        self.window = self.w.get_widget("window")
 
         self.chiedi = self.w.get_widget("chiedi")
         self.ok = self.w.get_widget("ok")
@@ -98,12 +95,14 @@ class Commu:
         for x in TESTA:
             self.testa.append_text(x)
 
+        self.rows = 0
+        self.cols = 0
+        self.objects = {}
+        self.arrows = {}
         self.previousFocus = (0,0)
-        self.curR = 0
-        self.curC = 0
-        self.AdjustTable()
-
         self._to = self._from = None
+        self.NewEntry(0,0)
+        self.AdjustTable(4,4)
 
         accelgroup = gtk.AccelGroup()
         accelgroup.connect_group(ord('Q'), gtk.gdk.CONTROL_MASK, 0,
@@ -134,7 +133,7 @@ class Commu:
 
         self.window.show()
 
-        self.BGcolor = self.btCopia.get_style().copy().bg[gtk.STATE_NORMAL]
+        self.BGcolor = self.btExport.get_style().copy().bg[gtk.STATE_NORMAL]
 
     def on_close(self, widget):
         if self.enablePreview: self.preview.RemoveTemporaryFiles()
@@ -145,16 +144,15 @@ class Commu:
             s = self.Build()
             if s != self.lastBuild:
                 self.lastBuild = s
-                self.preview.SilentPreview(s)
+                self.preview.Preview(s)
         return True
-    
+
     def MoveRows(self, n):
-        R = int(self.Row())
-        lista = range(R)
+        lista = range(self.rows)
         if n > 0: lista.reverse()
-        for c in xrange(int(self.Col())):
+        for c in xrange(self.cols):
             for r in lista:
-                if r-n >= 0 and r-n < R:
+                if r-n >= 0 and r-n < self.rows:
                     self.objects[(r, c)].SetName(self.objects[(r-n, c)].Name())
                 else:
                     self.objects[(r, c)].SetName("")
@@ -162,7 +160,7 @@ class Commu:
 
         self.newArrow = {}
         for f in self.arrows.keys():
-            if f[0][0]+n >= 0 and f[0][0]+n < R and f[1][0]+n >= 0 and f[1][0]+n < R:
+            if f[0][0]+n >= 0 and f[0][0]+n < self.rows and f[1][0]+n >= 0 and f[1][0]+n < self.rows:
                 self.newArrow[((f[0][0]+n, f[0][1]), (f[1][0]+n, f[1][1]))] = self.arrows[f]
                 self.objects[(f[0][0]+n, f[0][1])].IncrementOutgoingArrows(len(self.arrows[f]))
                 self.objects[(f[1][0]+n, f[1][1])].IncrementIncomingArrows(len(self.arrows[f]))
@@ -171,21 +169,26 @@ class Commu:
         if self._from != None and self._to != None:
             self.objects[self._from].SetNormal(self.BGcolor)
             self.objects[self._to].SetNormal(self.BGcolor)
-            if self._from[0]+n >= 0 and self._from[0]+n < R and self._to[0]+n >= 0 and self._to[0]+n < R:
+            if self._from[0]+n >= 0 and self._from[0]+n < self.rows and self._to[0]+n >= 0 and self._to[0]+n < self.rows:
                 self._from = (self._from[0]+n, self._from[1])
                 self._to = (self._to[0]+n, self._to[1])
                 self.objects[self._from].SetFrom()
                 self.objects[self._to].SetTo()
             else:
                 self._from = self._to = None
+        self.previousFocus = list(self.getFocused())
+        self.previousFocus[0] += n
+        if self.previousFocus[0] < 0: self.previousFocus[0] = 0
+        elif self.previousFocus[0] >= self.rows: self.previousFocus[0] = self.rows-1
+        self.previousFocus = tuple(self.previousFocus)
+        self.objects[self.previousFocus].label.grab_focus()
 
     def MoveCols(self, n):
-        C = int(self.Col())
-        lista = range(C)
+        lista = range(self.cols)
         if n > 0: lista.reverse()
-        for r in xrange(int(self.Row())):
+        for r in xrange(self.rows):
             for c in lista:
-                if c-n >= 0 and c-n < C:
+                if c-n >= 0 and c-n < self.cols:
                     self.objects[(r, c)].SetName(self.objects[(r, c-n)].Name())
                 else:
                     self.objects[(r, c)].SetName("")
@@ -193,7 +196,7 @@ class Commu:
 
         self.newArrow = {}
         for f in self.arrows.keys():
-            if f[0][1]+n >= 0 and f[0][1]+n < C and f[1][1]+n >= 0 and f[1][1]+n < C:
+            if f[0][1]+n >= 0 and f[0][1]+n < self.cols and f[1][1]+n >= 0 and f[1][1]+n < self.cols:
                 self.newArrow[((f[0][0], f[0][1]+n), (f[1][0], f[1][1]+n))] = self.arrows[f]
                 self.objects[(f[0][0], f[0][1]+n)].IncrementOutgoingArrows(len(self.arrows[f]))
                 self.objects[(f[1][0], f[1][1]+n)].IncrementIncomingArrows(len(self.arrows[f]))
@@ -202,22 +205,30 @@ class Commu:
         if self._from != None and self._to != None:
             self.objects[self._from].SetNormal(self.BGcolor)
             self.objects[self._to].SetNormal(self.BGcolor)
-            if self._from[1]+n >= 0 and self._from[1]+n < C and self._to[1]+n >= 0 and self._to[1]+n < C:
+            if self._from[1]+n >= 0 and self._from[1]+n < self.cols and self._to[1]+n >= 0 and self._to[1]+n < self.cols:
                 self._from = (self._from[0], self._from[1]+n)
                 self._to = (self._to[0], self._to[1]+n)
                 self.objects[self._from].SetFrom()
                 self.objects[self._to].SetTo()
             else:
                 self._from = self._to = None
+        self.previousFocus = list(self.getFocused())
+        self.previousFocus[1] += n
+        if self.previousFocus[1] < 0: self.previousFocus[1] = 0
+        elif self.previousFocus[1] >= self.cols: self.previousFocus[1] = self.cols-1
+        self.previousFocus = tuple(self.previousFocus)
+        self.objects[self.previousFocus].label.grab_focus()
 
-    def AdjustTable(self):
+    def getFocused(self):
         for o in self.objects.keys():
             if self.objects[o].label.is_focus():
-                self.previousFocus = o 
-        R = int(self.Row())
-        C = int(self.Col())
-        oldR = self.curR
-        oldC = self.curC
+                return o
+        return (0,0)
+
+    def AdjustTable(self, R, C):
+        self.previousFocus = self.getFocused()
+        oldR = self.rows
+        oldC = self.cols
         for r in xrange(oldR, R):
             for c in xrange(0, C):
                 self.NewEntry(r, c)
@@ -240,9 +251,13 @@ class Commu:
                 self.table.attach(self.objects[(r,c)].box, c, c+1, r, r+1, 0, 0, 0, 0)
                 self.objects[(r,c)].box.show_all()
         self.table.get_children()[-1].get_children()[0].grab_focus()
-        self.curR = R
-        self.curC = C
-        self.objects[self.previousFocus].label.grab_focus()
+        self.rows = R
+        self.cols = C
+        if self.objects.has_key(self.previousFocus):
+            self.objects[self.previousFocus].label.grab_focus()
+        else:
+            self.objects[(0,0)].label.grab_focus()
+
 
     def NewEntry(self, i, j):
         o = Object(self.Tooltip)
@@ -250,7 +265,7 @@ class Commu:
         o.coll.connect("drag_data_get", self.on_entry_drag_data_get, (i,j))
         o.coll.drag_source_set(gtk.gdk.BUTTON1_MASK, [("text/plain", gtk.TARGET_SAME_APP, 80)], gtk.gdk.ACTION_LINK)
         o.label.connect("drag_data_received", self.on_entry_drag_data_received, (i,j))
-        
+
     def delEntry(self, i, j):
         if (i,j) == self._from or (i,j) == self._to:
             self.objects[self._from].SetNormal(self.BGcolor)
@@ -262,7 +277,7 @@ class Commu:
                     f = self.arrows[(_from, _to)].pop()
                     del(f)
                     self.objects[_from].DecrementOutgoingArrows()
-                    self.objects[_to].DecrementIncomingArrows()        
+                    self.objects[_to].DecrementIncomingArrows()
         self.table.remove(self.objects[(i,j)].box)
         del(self.objects[(i,j)])
         self.ShowFromTo(self._from, self._to)
@@ -289,12 +304,6 @@ class Commu:
             if (_from, _to) in self.arrows.keys() and \
                     self.arrows[(_from, _to)] != []:
                 self.arrows[(_from, _to)][-1].focus()
-        
-    def Row(self):
-        return self.spinRow.get_value()
-
-    def Col(self):
-        return self.spinCol.get_value()
 
     def ask_loss_information(self):
         msgbox = gtk.MessageDialog(parent = None,
@@ -308,28 +317,26 @@ class Commu:
         return result == gtk.RESPONSE_YES
 
     def empty_N(self):
-        for i in xrange(int(self.Col())):
+        for i in xrange(self.cols):
             if not self.objects[(0, i)].isEmpty():
                 return False
         return True
-    
+
     def empty_S(self):
-        R = int(self.Row())
-        for i in xrange(int(self.Col())):
-            if not self.objects[(R-1, i)].isEmpty():
+        for i in xrange(self.cols):
+            if not self.objects[(self.rows-1, i)].isEmpty():
                 return False
         return True
 
     def empty_W(self):
-        for i in xrange(int(self.Row())):
+        for i in xrange(self.rows):
             if not self.objects[(i, 0)].isEmpty():
                 return False
         return True
-    
+
     def empty_E(self):
-        C = int(self.Col())
-        for i in xrange(int(self.Row())):
-            if not self.objects[(i, C-1)].isEmpty():
+        for i in xrange(self.rows):
+            if not self.objects[(i, self.cols-1)].isEmpty():
                 return False
         return True
 
@@ -337,49 +344,75 @@ class Commu:
         if (self.empty_N() and self.empty_W()) or self.ask_loss_information():
             self.MoveRows(-1)
             self.MoveCols(-1)
-    
+
     def on_btN_clicked(self, widget):
         if self.empty_N() or self.ask_loss_information():
             self.MoveRows(-1)
-    
+
+    def on_btN_P_clicked(self, widget):
+        self.AdjustTable(self.rows + 1, self.cols)
+        self.MoveRows(1)
+
+    def on_btN_M_clicked(self, widget):
+        if self.rows > 1 and (self.empty_N() or self.ask_loss_information()):
+            self.MoveRows(-1)
+            self.AdjustTable(self.rows - 1, self.cols)
+
     def on_btNE_clicked(self, widget):
         if (self.empty_N() and self.empty_E()) or self.ask_loss_information():
             self.MoveRows(-1)
             self.MoveCols(1)
-    
+
     def on_btE_clicked(self, widget):
         if self.empty_E() or self.ask_loss_information():
             self.MoveCols(1)
-    
+
+    def on_btE_P_clicked(self, widget):
+        self.AdjustTable(self.rows, self.cols + 1)
+
+    def on_btE_M_clicked(self, widget):
+        if self.cols > 1 and (self.empty_E() or self.ask_loss_information()):
+            self.AdjustTable(self.rows, self.cols - 1)
+
     def on_btSE_clicked(self, widget):
         if (self.empty_S() and self.empty_E()) or self.ask_loss_information():
             self.MoveRows(1)
             self.MoveCols(1)
-    
+
     def on_btS_clicked(self, widget):
         if self.empty_S() or self.ask_loss_information():
             self.MoveRows(1)
-    
+
+    def on_btS_P_clicked(self, widget):
+        self.AdjustTable(self.rows + 1, self.cols)
+
+    def on_btS_M_clicked(self, widget):
+        if self.rows > 1 and (self.empty_S() or self.ask_loss_information()):
+            self.AdjustTable(self.rows - 1, self.cols)
+
     def on_btSW_clicked(self, widget):
         if (self.empty_S() and self.empty_W()) or self.ask_loss_information():
             self.MoveRows(1)
             self.MoveCols(-1)
-    
+
     def on_btW_clicked(self, widget):
         if self.empty_W() or self.ask_loss_information():
             self.MoveCols(-1)
-    
-    def on_spinRow_change_value(self, widget):
-        self.AdjustTable()
-    
-    def on_spinCol_change_value(self, widget):
-        self.AdjustTable()
+
+    def on_btW_P_clicked(self, widget):
+        self.AdjustTable(self.rows, self.cols + 1)
+        self.MoveCols(1)
+
+    def on_btW_M_clicked(self, widget):
+        if self.cols > 1 and (self.empty_W() or self.ask_loss_information()):
+            self.MoveCols(-1)
+            self.AdjustTable(self.rows, self.cols - 1)
 
     def on_entry_drag_data_get(self, widget, context, sel, targetType, eventTime, data):
         if self._from != None: self.objects[self._from].SetNormal(self.BGcolor)
         self._from = data
         self.objects[self._from].SetFrom()
-        
+
     def on_entry_drag_data_received(self, widget, context, x, y, sel, type, time, data):
         if self._to != None and self._from != self._to: self.objects[self._to].SetNormal(self.BGcolor)
         self._to = data
@@ -390,18 +423,15 @@ class Commu:
         self.ShowFromTo(self._from, self._to)
 
     def on_btReset_clicked(self, widget):
-        if self._to != None: self.objects[self._to].SetNormal(self.BGcolor)
-        if self._from != None: self.objects[self._from].SetNormal(self.BGcolor)
-        self._to = self._from = None
-        self.arrows = {}
-        self.objects[(0,0)].Reset()
-        self.spinCol.set_value(0.0)
-        self.spinRow.set_value(0.0)
-        self.AdjustTable()
-        self.spinCol.set_value(2.0)
-        self.spinRow.set_value(2.0)
-        self.AdjustTable()
-        self.ShowFromTo(None, None)
+        if self.ask_loss_information():
+            if self._to != None: self.objects[self._to].SetNormal(self.BGcolor)
+            if self._from != None: self.objects[self._from].SetNormal(self.BGcolor)
+            self._to = self._from = None
+            self.arrows = {}
+            self.objects[(0,0)].Reset()
+            self.AdjustTable(1, 1)
+            self.AdjustTable(4, 4)
+            self.ShowFromTo(None, None)
 
     def on_add_clicked(self, widget, data):
         if self._from != None and self._to != None:
@@ -411,9 +441,9 @@ class Commu:
         self.arrows[(self._from, self._to)].remove(arrows)
         del(arrows)
         self.objects[self._from].DecrementOutgoingArrows()
-        self.objects[self._to].DecrementIncomingArrows()        
+        self.objects[self._to].DecrementIncomingArrows()
         self.ShowFromTo(self._from,self._to)
-        
+
     def on_preset_changed(self, widget, arrows):
         if arrows.preset.get_active() == PRESET.index("Manual"):
             self.curArrows = arrows
@@ -424,7 +454,7 @@ class Commu:
             self.chiedi.show_all()
         else:
             arrows.set()
-    
+
     def on_btPreview_clicked(self, widget):
         if self.enablePreview:
             self.preview.Preview(self.Build())
@@ -433,73 +463,77 @@ class Commu:
     def arrow_left(self):
         for o in self.objects.keys():
             if self.objects[o].label.is_focus():
-                if o[1] > 0:
-                    newo = (o[0], o[1]-1)
-                    self.previousFocus = newo 
-                    self.on_entry_drag_data_get(self, None, None,
-                                                None, None, o)
-                    self.on_entry_drag_data_received(self, None, None,
-                                                     None, None, None,
-                                                     None, newo)
-                    return
+                if o[1] == 0:
+                    self.AdjustTable(self.rows, self.cols + 1)
+                    self.MoveCols(1)
+                    o = (o[0], 1)
+                newo = (o[0], o[1]-1)
+                self.previousFocus = newo
+                self.on_entry_drag_data_get(self, None, None,
+                                            None, None, o)
+                self.on_entry_drag_data_received(self, None, None,
+                                                 None, None, None,
+                                                 None, newo)
+                return
         self.objects[self.previousFocus].label.grab_focus()
 
     def arrow_right(self):
         for o in self.objects.keys():
             if self.objects[o].label.is_focus():
-                if o[1] < self.curC-1:
-                    newo = (o[0], o[1]+1)
-                    self.previousFocus = newo
-                    self.on_entry_drag_data_get(self, None, None,
-                                                None, None, o)
-                    self.on_entry_drag_data_received(self, None, None,
-                                                     None, None, None,
-                                                     None, newo)
-                    return
+                if o[1] == self.cols-1:
+                    self.AdjustTable(self.rows, self.cols + 1)
+                newo = (o[0], o[1]+1)
+                self.previousFocus = newo
+                self.on_entry_drag_data_get(self, None, None,
+                                            None, None, o)
+                self.on_entry_drag_data_received(self, None, None,
+                                                 None, None, None,
+                                                 None, newo)
+                return
         self.objects[self.previousFocus].label.grab_focus()
 
     def arrow_up(self):
         for o in self.objects.keys():
             if self.objects[o].label.is_focus():
-                if o[0] > 0:
-                    newo = (o[0]-1, o[1])
-                    self.previousFocus = newo 
-                    self.on_entry_drag_data_get(self, None, None,
-                                                None, None, o)
-                    self.on_entry_drag_data_received(self, None, None,
-                                                     None, None, None,
-                                                     None, newo)
-                    return
+                if o[0] == 0:
+                    self.AdjustTable(self.rows + 1, self.cols)
+                    self.MoveRows(1)
+                    o = (1, o[1])
+                newo = (o[0]-1, o[1])
+                self.previousFocus = newo
+                self.on_entry_drag_data_get(self, None, None,
+                                            None, None, o)
+                self.on_entry_drag_data_received(self, None, None,
+                                                 None, None, None,
+                                                 None, newo)
+                return
         self.objects[self.previousFocus].label.grab_focus()
 
     def arrow_down(self):
         for o in self.objects.keys():
             if self.objects[o].label.is_focus():
-                if o[0] < self.curR-1:
-                    newo = (o[0]+1, o[1])
-                    self.previousFocus = newo 
-                    self.on_entry_drag_data_get(self, None, None,
-                                                None, None, o)
-                    self.on_entry_drag_data_received(self, None, None,
-                                                     None, None, None,
-                                                     None, newo)
-                    return
+                if o[0] == self.rows-1:
+                    self.AdjustTable(self.rows + 1, self.cols)
+                newo = (o[0]+1, o[1])
+                self.previousFocus = newo
+                self.on_entry_drag_data_get(self, None, None,
+                                            None, None, o)
+                self.on_entry_drag_data_received(self, None, None,
+                                                 None, None, None,
+                                                 None, newo)
+                return
         self.objects[self.previousFocus].label.grab_focus()
 
-    
-                    
     def Build(self):
         s = ""
-        R = self.curR
-        C = self.curC
         rientro = int(self.spinR.get_value())
         w = self.spinW.get_value()
         h = self.spinH.get_value()
         s += " " * rientro + "\\[\n"
         s += " " * rientro + "\\begin{tikzpicture}[xscale=%.1f,yscale=%.1f]\n" % (w, -h)
 
-        for r in xrange(R):
-            for c in xrange(C):
+        for r in xrange(self.rows):
+            for c in xrange(self.cols):
                 if self.objects[(r,c)].ToWrite():
                     if self.objects[(r,c)].Name() != "":
                         s += " " * (rientro+2) + "\\node (A%d_%d) at (%d, %d) {$%s$};\n" % (r, c, c, r, self.objects[(r,c)].Name())
@@ -509,19 +543,20 @@ class Commu:
         for direzione in self.arrows.keys():
             for f in self.arrows[direzione]:
                 _from, _to = direzione
-                s += " " * (rientro+2) + "\\path (A%d_%d) edge [" % (_from[0], _from[1])
+                s += " " * (rientro+2) + "\\path (A%d_%d)" % (_from[0], _from[1])
+                s += " edge ["
 
                 if f.coda == CODA.index("Injection above"): s += "right hook"
                 elif f.coda == CODA.index("Injection below"): s += "left hook"
                 elif f.coda == CODA.index("Element"): s += "serif cm" #alternativa: "|"
 
                 if f.tratto == TRATTO.index("Normal") or f.tratto == TRATTO.index("Dashed") or f.tratto == TRATTO.index("Double"): s += "-"
-                
+
                 if f.testa == TESTA.index("Arrow"): s += ">"
                 elif f.testa == TESTA.index("Double arrow"): s += ">>"
 
                 if f.tratto == TRATTO.index("Dashed"): s += ",dashed"
-                elif f.tratto == TRATTO.index("Double"): s += ",double"
+                elif f.tratto == TRATTO.index("Double"): s += ",double distance=1.5pt"
 
                 if f.inarcamento() > 0: s += ",bend left=%d" % (f.inarcamento())
                 elif f.inarcamento() < 0: s += ",bend right=%d" % (abs(f.inarcamento()))
@@ -530,21 +565,21 @@ class Commu:
 
                 if f.altobasso() == SCRITTA.index("Above"): s += "auto"
                 elif f.altobasso() == SCRITTA.index("Below"): s += "auto,swap"
-                
+
                 s += "] {$\scriptstyle{%s}$} " % f.funzione()
 
                 if f.decorazione == DECORAZIONE.index("Isomorphism"):
                     s += "node ["
                     if f.altobasso() == SCRITTA.index("Above"): s += "rotate=180,"
                     s += "sloped] {$\scriptstyle{\widetilde{\ \ \ }}$} "
-                
-                s += "(A%d_%d);\n" % (_to[0], _to[1])
-            
+
+                s += "(A%d_%d)" % (_to[0], _to[1])
+                s += ";\n"
         s += " " * rientro + "\\end{tikzpicture}\n"
         s += " " * rientro + "\\]\n"
         return s
 
-    def on_btCopia_clicked(self, widget):
+    def on_btExport_clicked(self, widget):
         c = gtk.Clipboard()
         c.set_text(self.Build())
 

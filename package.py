@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from py2deb import Py2deb
 
-version="2009.11.25"
 changelog=open("changelog.txt","r").read()
+version=changelog.split("\n")[0][8:]
 
 p = Py2deb("commu")
 p.author = "Stefano Maggiolo"

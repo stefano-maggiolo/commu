@@ -13,10 +13,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-Create commutative diagrams with PGF/TikZ.
-Version: 20080916
-Author: Stefano Maggiolo <s.maggiolo@gmail.com>
 """
 
 import gtk
@@ -31,4 +27,3 @@ if __name__ == "__main__":
     except ImportError:
         commu_main.Commu(preview = False)
     gtk.main()
-                
