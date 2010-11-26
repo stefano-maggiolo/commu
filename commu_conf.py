@@ -14,9 +14,9 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 SCRITTA = ["Above", "Below", "Midline"]
-PRESET = ["Normal", "Isomorphism", "Equal", "Injection", "Surjection", "Segment", "Dashed", "Manual"]
+PRESET = ["Normal", "Isomorphism", "Equal", "Injection", "Surjection", "Segment", "Dashed", "Invisible", "Manual"]
 CODA = ["Normal", "Injection above", "Injection below", "Element"]
-TRATTO = ["Normal", "Dashed", "Double"]
+TRATTO = ["Normal", "Dashed", "Double", "No"]
 DECORAZIONE = ["No", "Isomorphism"]
 TESTA = ["Arrow", "Double arrow", "No"]
 

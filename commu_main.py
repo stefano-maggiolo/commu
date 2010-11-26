@@ -70,8 +70,6 @@ class Commu:
 
         self.w.signal_autoconnect(dic)
 
-        self.Tooltip = gtk.Tooltips()
-
         self.spinW = self.w.get_widget("spinW")
         self.spinH = self.w.get_widget("spinH")
         self.spinR = self.w.get_widget("spinR")
@@ -260,7 +258,7 @@ class Commu:
 
 
     def NewEntry(self, i, j):
-        o = Object(self.Tooltip)
+        o = Object()
         self.objects[(i,j)] = o
         o.coll.connect("drag_data_get", self.on_entry_drag_data_get, (i,j))
         o.coll.drag_source_set(gtk.gdk.BUTTON1_MASK, [("text/plain", gtk.TARGET_SAME_APP, 80)], gtk.gdk.ACTION_LINK)
@@ -283,7 +281,7 @@ class Commu:
         self.ShowFromTo(self._from, self._to)
 
     def creaArrows(self, _from, _to):
-        f = Arrow(self.Tooltip)
+        f = Arrow()
         if (_from, _to) not in self.arrows.keys():
             self.arrows[(_from, _to)] = []
         self.arrows[(_from, _to)].append(f)
@@ -544,24 +542,28 @@ class Commu:
             for f in self.arrows[direzione]:
                 _from, _to = direzione
                 s += " " * (rientro+2) + "\\path (A%d_%d)" % (_from[0], _from[1])
-                s += " edge ["
+                if f.tratto == TRATTO.index("No"):
+                    s += " --"
+                else:
+                    s += " edge ["
 
-                if f.coda == CODA.index("Injection above"): s += "right hook"
-                elif f.coda == CODA.index("Injection below"): s += "left hook"
-                elif f.coda == CODA.index("Element"): s += "serif cm" #alternativa: "|"
+                    if f.coda == CODA.index("Injection above"): s += "right hook"
+                    elif f.coda == CODA.index("Injection below"): s += "left hook"
+                    elif f.coda == CODA.index("Element"): s += "serif cm" #alternativa: "|"
 
-                if f.tratto == TRATTO.index("Normal") or f.tratto == TRATTO.index("Dashed") or f.tratto == TRATTO.index("Double"): s += "-"
+                    if f.tratto == TRATTO.index("Normal") or f.tratto == TRATTO.index("Dashed") or f.tratto == TRATTO.index("Double"): s += "-"
 
-                if f.testa == TESTA.index("Arrow"): s += ">"
-                elif f.testa == TESTA.index("Double arrow"): s += ">>"
+                    if f.testa == TESTA.index("Arrow"): s += ">"
+                    elif f.testa == TESTA.index("Double arrow"): s += ">>"
 
-                if f.tratto == TRATTO.index("Dashed"): s += ",dashed"
-                elif f.tratto == TRATTO.index("Double"): s += ",double distance=1.5pt"
+                    if f.tratto == TRATTO.index("Dashed"): s += ",dashed"
+                    elif f.tratto == TRATTO.index("Double"): s += ",double distance=1.5pt"
 
-                if f.inarcamento() > 0: s += ",bend left=%d" % (f.inarcamento())
-                elif f.inarcamento() < 0: s += ",bend right=%d" % (abs(f.inarcamento()))
+                    if f.inarcamento() > 0: s += ",bend left=%d" % (f.inarcamento())
+                    elif f.inarcamento() < 0: s += ",bend right=%d" % (abs(f.inarcamento()))
+                    s += "]"
 
-                s += "] node ["
+                s += "node ["
 
                 if f.altobasso() == SCRITTA.index("Above"): s += "auto"
                 elif f.altobasso() == SCRITTA.index("Below"): s += "auto,swap"

@@ -24,16 +24,14 @@ import os
 from commu_conf import *
 
 class Object:
-    def __init__(self, tooltip):
-        self.tooltip = tooltip
-
+    def __init__(self):
         self.label = gtk.Entry()
-        tooltip.set_tip(self.label, "Drop here to create an arrow to this object.")
+        self.label.set_tooltip_text("Drop here to create an arrow to this object")
         self.box = gtk.HBox()
         self.coll = gtk.Button("0")
         self.coll.set_property('focus-on-click', False)
         self.coll.set_property('can-focus', False)
-        tooltip.set_tip(self.coll, "Drag from here to create an arrow from this object.")
+        self.coll.set_tooltip_text("Drag from here to create an arrow from this object")
         self.box.add(self.label)
         self.box.add(self.coll)
 
@@ -98,21 +96,20 @@ class Object:
         return self.outgoingArrows == 0 and self.incomingArrows == 0 and self.Name() == ""
 
 class Arrow:
-    def __init__(self, tooltip):
-        self.tooltip = tooltip
+    def __init__(self):
         self.box = gtk.HBox()
         self.funz = gtk.Entry()
-        self.tooltip.set_tip(self.funz, "The function.")
+        self.funz.set_tooltip_text("The function")
         self.ab = gtk.combo_box_new_text()
-        self.tooltip.set_tip(self.ab, "Where the funtion should be.")
+        self.ab.set_tooltip_text("Where the funtion should be")
         self.preset = gtk.combo_box_new_text()
-        self.tooltip.set_tip(self.preset, "Arrow type.")
+        self.preset.set_tooltip_text("Arrow type")
         self.inarc = gtk.SpinButton(digits = 0)
-        self.tooltip.set_tip(self.inarc, "Arrow curve, in degree.")
+        self.inarc.set_tooltip_text("Arrow curve, in degrees")
         self.canc = gtk.Button("Delete")
-        self.tooltip.set_tip(self.canc, "Delete the arrow.")
+        self.canc.set_tooltip_text("Delete the arrow")
         self.add = gtk.Button("Add arrow")
-        self.tooltip.set_tip(self.canc, "Add another arrow.")
+        self.canc.set_tooltip_text("Add another arrow")
 
         self.inarc.set_increments(5, 30)
         self.inarc.set_range(-180, 180)
@@ -194,3 +191,8 @@ class Arrow:
             self.tratto = TRATTO.index("Dashed")
             self.decorazione = DECORAZIONE.index("No")
             self.testa = TESTA.index("Arrow")
+        elif tipo == PRESET.index("Invisible"):
+            self.coda = CODA.index("Normal")
+            self.tratto = TRATTO.index("No")
+            self.decorazione = DECORAZIONE.index("No")
+            self.testa = TESTA.index("No")

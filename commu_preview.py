@@ -79,7 +79,7 @@ theory of ultrafilters."
 
         accelgroup = gtk.AccelGroup()
         accelgroup.connect_group(ord('W'), gtk.gdk.CONTROL_MASK, 0,
-                                 lambda *etc: win.destroy())
+                                 lambda *etc: self.DeletePreviewWindow(None))
         win.add_accel_group(accelgroup)
 
         ##################################################################
@@ -178,7 +178,7 @@ theory of ultrafilters."
 
         accelgroup = gtk.AccelGroup()
         accelgroup.connect_group(ord('W'), gtk.gdk.CONTROL_MASK, 0,
-                                 lambda *etc: win.destroy())
+                                 lambda *etc: self.DeleteHelpWindow(None))
         win.add_accel_group(accelgroup)
 
         ###############################
@@ -276,7 +276,7 @@ theory of ultrafilters."
 
         accelgroup = gtk.AccelGroup()
         accelgroup.connect_group(ord('W'), gtk.gdk.CONTROL_MASK, 0,
-                                 lambda *etc: win.destroy())
+                                 lambda *etc: self.DeleteErrorWindow(None))
         win.add_accel_group(accelgroup)
 
         #######################################################

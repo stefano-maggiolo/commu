@@ -1,5 +1,7 @@
 Version 2010.11.26
-* Fixed the preview when using external definitions.
+* New invisible arrow, to draw "commutative" and "cartesian" signs.
+* Fixed the preview when using external definitions (thanks to Fabio Tonini).
+* Use new tooltips (to remove deprecation warnings).
 
 Version 2010.09.12
 * Better "equal" arrow.
