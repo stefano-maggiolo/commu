@@ -405,9 +405,9 @@ theory of ultrafilters."
                 for m in accepted_match:
                     if l.startswith(m):
                        command_name = reg.findall(l)[0]
-                       if not command_name in AlreadyDefinedCommands:
+                       if not command_name in already_defined_commands:
                            commands_list.append(l)
-                           AlreadyDefinedCommands.append(command_name)
+                           already_defined_commands.append(command_name)
                        break
             tex_file.close()
 
