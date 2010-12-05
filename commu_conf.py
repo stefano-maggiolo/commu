@@ -20,3 +20,21 @@ TRATTO = ["Normal", "Dashed", "Double", "No"]
 DECORAZIONE = ["No", "Isomorphism"]
 TESTA = ["Arrow", "Double arrow", "No"]
 
+
+# Installation directory or just source directory?
+import os
+
+if 'commu.py' in os.listdir(os.path.dirname(__file__)):
+	# launch from a source directory
+	INSTALLATION_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
+else:
+	INSTALLATION_DIRECTORY = os.path.join("/", "usr", "share", "commu")
+
+try:
+	import xdg.BaseDirectory
+	USER_DIRECTORY = os.path.join(xdg.BaseDirectory.xdg_config_home, "commu")
+except ImportError:
+	USER_DIRECTORY = os.path.join(os.path.expanduser("~"), ".config","commu")
+
+try: os.makedirs(USER_DIRECTORY)
+except OSError: pass

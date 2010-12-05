@@ -1,0 +1,335 @@
+[diagrams]
+[[Fiber Product]]
+cnum = 4
+image = /home/fabio/.config/commu/Templates/Fiber Product.png
+cmar = 2.0
+vdist = 1.4
+hdist = 1.8
+rnum = 4
+[[[arrows]]]
+[[[[1]]]]
+source_label = A2_1
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[0]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A2_1
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[3]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A1_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[2]]]]
+source_label = A1_2
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[nodes]]]
+[[[[A2_1]]]]
+tex = Y
+pos = 2, 1
+[[[[A2_2]]]]
+tex = S
+pos = 2, 2
+[[[[A1_2]]]]
+tex = X
+pos = 1, 2
+[[[[A1_1]]]]
+tex = Y\times_S X
+pos = 1, 1
+[[Lifting]]
+cnum = 4
+image = /home/fabio/.config/commu/Templates/Lifting.png
+cmar = 2.0
+vdist = 1.3
+hdist = 1.3
+rnum = 4
+[[[arrows]]]
+[[[[1]]]]
+source_label = A2_1
+TESTA = 0
+target_label = A1_2
+CODA = 0
+TRATTO = 1
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 6
+[[[[0]]]]
+source_label = A2_1
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 1
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[2]]]]
+source_label = A1_2
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[nodes]]]
+[[[[A2_1]]]]
+tex = Z
+pos = 2, 1
+[[[[A2_2]]]]
+tex = Y
+pos = 2, 2
+[[[[A1_2]]]]
+tex = X
+pos = 1, 2
+[[Factorization Down]]
+cnum = 4
+image = /home/fabio/.config/commu/Templates/Factorization Down.png
+cmar = 2.0
+vdist = 0.8
+hdist = 1.3
+rnum = 4
+[[[arrows]]]
+[[[[1]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 1
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[0]]]]
+source_label = A2_2
+TESTA = 0
+target_label = A1_3
+CODA = 0
+TRATTO = 0
+altobasso = 1
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[2]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A1_3
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[nodes]]]
+[[[[A2_2]]]]
+tex = Z
+pos = 2, 2
+[[[[A1_3]]]]
+tex = Y
+pos = 1, 3
+[[[[A1_1]]]]
+tex = X
+pos = 1, 1
+[[Factorization Up]]
+cnum = 4
+image = /home/fabio/.config/commu/Templates/Factorization Up.png
+cmar = 2.0
+vdist = 0.8
+hdist = 1.3
+rnum = 4
+[[[arrows]]]
+[[[[1]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A0_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[0]]]]
+source_label = A0_2
+TESTA = 0
+target_label = A1_3
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[2]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A1_3
+CODA = 0
+TRATTO = 0
+altobasso = 1
+inarcamento = 0
+tex_label = f
+DECORAZIONE = 0
+PRESET = 0
+[[[nodes]]]
+[[[[A1_3]]]]
+tex = Y
+pos = 1, 3
+[[[[A0_2]]]]
+tex = Z
+pos = 0, 2
+[[[[A1_1]]]]
+tex = X
+pos = 1, 1
+[[Base Change]]
+cnum = 4
+image = /home/fabio/.config/commu/Templates/Base Change.png
+cmar = 2.0
+vdist = 1.2
+hdist = 1.5
+rnum = 4
+[[[arrows]]]
+[[[[1]]]]
+source_label = A2_1
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[0]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A2_1
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[3]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A1_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[2]]]]
+source_label = A1_2
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[nodes]]]
+[[[[A2_1]]]]
+tex = "Y'"
+pos = 2, 1
+[[[[A2_2]]]]
+tex = Y
+pos = 2, 2
+[[[[A1_2]]]]
+tex = X
+pos = 1, 2
+[[[[A1_1]]]]
+tex = "X'"
+pos = 1, 1
+[[Map Over S]]
+cnum = 4
+image = /home/fabio/.config/commu/Templates/Map Over S.png
+cmar = 2.0
+vdist = 0.9
+hdist = 1.0
+rnum = 4
+[[[arrows]]]
+[[[[1]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 1
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[0]]]]
+source_label = A1_3
+TESTA = 0
+target_label = A2_2
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[[2]]]]
+source_label = A1_1
+TESTA = 0
+target_label = A1_3
+CODA = 0
+TRATTO = 0
+altobasso = 0
+inarcamento = 0
+tex_label = ""
+DECORAZIONE = 0
+PRESET = 0
+[[[nodes]]]
+[[[[A2_2]]]]
+tex = S
+pos = 2, 2
+[[[[A1_3]]]]
+tex = Y
+pos = 1, 3
+[[[[A1_1]]]]
+tex = X
+pos = 1, 1

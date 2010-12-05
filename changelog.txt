@@ -1,3 +1,7 @@
+Version 2010.12.05
+* New template feature: save, save as and load commutative diagrams (the load part has to be finished).
+* New way of importing own commands and packages through a specific window.
+
 Version 2010.11.26
 * New invisible arrow, to draw "commutative" and "cartesian" signs.
 * Fixed the preview when using external definitions (thanks to Fabio Tonini).
