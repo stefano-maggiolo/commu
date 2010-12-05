@@ -440,8 +440,7 @@ class Commu:
 			self.AdjustTable(1, 1)
 			self.AdjustTable(4, 4)
 			self.ShowFromTo(None, None)
-			try: delattr(self.globalConfiguration,'last_diagram_saved')
-			except: pass
+			self.globalConfiguration.UnSetLastDiagramSaved()
 
 	def on_add_clicked(self, widget, data):
 		if self._from != None and self._to != None:

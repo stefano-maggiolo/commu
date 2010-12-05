@@ -315,9 +315,9 @@ class GlobalConfiguration:
 		
 		if remove_temp: preview.RemoveTemporaryFiles()
 	
-	def SetDiagramInGui(self,diag):
+	def SetDiagramInGui(self,diag, diag_name):
 		
-		# self.Commu e' l'istanza di commu, da cui puoi prendere quello che serve della gui
+		# self.commu e' l'istanza di commu, da cui puoi prendere quello che serve della gui
 		
 		rientro = int(float(diag.get(key_char_margin,default_key_char_margin)))
 		w = float(diag.get(key_hor_distance,default_key_hor_distance))
@@ -344,12 +344,11 @@ class GlobalConfiguration:
 			tipo = int(arrow.get(key_arrows_preset, default_key_arrows_preset))
 			funzione = arrow.get(key_arrows_tex_label,default_key_arrows_tex_label)
 		
-	def GetAndSetDiagramInGui(self,name):
-		try: diag_configobj = self.diagrams[name]
-		except KeyError:
-			# if this exception is raised, something is wrong
-			return
-		self.SetDiagramInGui(DiagramConfiguration(diag_configobj))
+		
+		## Lascia questo per ultimo
+		self.SetLastDiagramSaved(diag_name)
+		self.DeleteLoadWindow(None)
+		
 		
 	def CreateBackupConfiguration(self, widget = None, data = None):
 		response, filename = DialogChooserBackup('save')
@@ -410,6 +409,14 @@ class GlobalConfiguration:
 		msgbox.set_title("Overwrite??")
 		
 		return msgbox
+	
+	def SetLastDiagramSaved(self, name):
+		self.last_diagram_saved = name
+		self.commu.w.get_widget("window").set_title("commu - Diagram : %s" % name)
+	def UnSetLastDiagramSaved(self):
+		if hasattr(self,'last_diagram_saved'):
+			delattr(self,'last_diagram_saved')
+			self.commu.w.get_widget("window").set_title("commu")
 		
 	def SaveChooseNameWindow(self, widget, old_name = None):
 		name = self.entry_for_ChooseName.get_text()
@@ -427,7 +434,8 @@ class GlobalConfiguration:
 				self.DeleteImageOfOldDiagrams([name])
 			try:
 				if name == self.last_diagram_saved:
-					delattr(self,'last_diagram_saved')
+					self.UnSetLastDiagramSaved()
+					#delattr(self,'last_diagram_saved')
 			except: pass
 		
 		if self.renaming:
@@ -436,6 +444,7 @@ class GlobalConfiguration:
 				if row[self.COL_NAMES] == old_name:
 					row[self.COL_NAMES] = name
 					break
+			self.UnSetLastDiagramSaved()
 		else:
 			image_output = '%s/%s.png' % (template_conf_directory,name)
 			image_name = self.new_diagram.conf[key_diagram_image]
@@ -445,7 +454,8 @@ class GlobalConfiguration:
 					self.new_diagram.AddImage(image_output)
 				except:
 					self.new_diagram.AddImage()
-			self.last_diagram_saved = name
+			self.SetLastDiagramSaved(name)
+			#self.last_diagram_saved = name
 			self.new_diagram = self.new_diagram.conf.dict()
 			
 		self.AddDiagram(name,self.new_diagram)
@@ -533,7 +543,7 @@ class GlobalConfiguration:
 		row=self.store[item_number]
 		diag_name = row[self.COL_NAMES]
 		diagram = self.diagrams[diag_name]
-		self.SetDiagramInGui(diagram)
+		self.SetDiagramInGui(diagram, diag_name)
 	
 	def RenameLoadWindow(self, widget, data = None):
 		selection = self.iconview.get_selected_items()
