@@ -25,16 +25,20 @@ TESTA = ["Arrow", "Double arrow", "No"]
 import os
 
 if 'commu.py' in os.listdir(os.path.dirname(__file__)):
-	# launch from a source directory
-	INSTALLATION_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
+    # launch from a source directory
+    INSTALLATION_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
 else:
-	INSTALLATION_DIRECTORY = os.path.join("/", "usr", "share", "commu")
+    INSTALLATION_DIRECTORY = os.path.join("/", "usr", "share", "commu")
 
 try:
-	import xdg.BaseDirectory
-	USER_DIRECTORY = os.path.join(xdg.BaseDirectory.xdg_config_home, "commu")
+    import xdg.BaseDirectory
+    USER_DIRECTORY = os.path.join(xdg.BaseDirectory.xdg_config_home,
+                                  "commu")
 except ImportError:
-	USER_DIRECTORY = os.path.join(os.path.expanduser("~"), ".config","commu")
+    USER_DIRECTORY = os.path.join(os.path.expanduser("~"),
+                                  ".config", "commu")
 
-try: os.makedirs(USER_DIRECTORY)
-except OSError: pass
+try:
+    os.makedirs(USER_DIRECTORY)
+except OSError:
+    pass

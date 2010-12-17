@@ -19,10 +19,10 @@ import gtk
 import sys
 
 if __name__ == "__main__":
-	import os
-	if not 'commu_main.py' in os.listdir(os.path.dirname(__file__)):
-		# commu is not launched from a source folder
-		sys.path.append('/usr/share/python-support/commu/commu')
-	import commu_main
-	commu_main.Commu()
-	gtk.main()
+    import os
+    if not 'commu_main.py' in os.listdir(os.path.dirname(__file__)):
+        # commu is not launched from a source folder
+        sys.path.append('/usr/share/python-support/commu/commu')
+    import commu_main
+    commu_main.Commu()
+    gtk.main()
