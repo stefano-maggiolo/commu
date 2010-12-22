@@ -136,6 +136,7 @@ class Commu:
         # Manage preview
         import commu_preview
         self.preview = commu_preview.Preview(self)
+        self.TemporaryBuild = None
 
         # Manage templates
         self.activate_templates()
@@ -150,7 +151,10 @@ class Commu:
 
     def TryPreview(self):
         if self.preview.isPreviewWindowCreated:
-            s = self.Build()
+            if self.TemporaryBuild == None:
+                s = self.Build()
+            else:
+                s = self.TemporaryBuild
             if s != self.lastBuild:
                 self.lastBuild = s
                 self.preview.Preview(s)

@@ -865,14 +865,16 @@ class GlobalConfiguration:
         the variables. Variables are of the form %(name). Same
         variables are going to be substituted with the same value.
         """
+        self.DeleteLoadWindow(None)
         self.FillTemplateDiagram = diagram
         self.FillTemplateDiagName = diag_name
+        self.timer = gobject.timeout_add(500, self.FillTemplatePreview)
 
         win = gtk.Window(gtk.WINDOW_TOPLEVEL)
         self.FillTemplateWindow = win
         win.set_modal(True)
         win.set_title("Fill the template")
-        win.connect("delete-event", self.DeleteChooseNameWindow)
+        win.connect("delete-event", self.DeleteFillTemplateWindow)
 
         accelgroup = gtk.AccelGroup()
         accelgroup.connect_group(ord('W'), gtk.gdk.CONTROL_MASK, 0,
@@ -885,11 +887,22 @@ class GlobalConfiguration:
         vbox.set_border_width(6)
         win.add(vbox)
 
+        ### IMAGE ###
+        try:
+            pixbuf = gtk.gdk.pixbuf_new_from_file(diagram[key_diagram_image])
+        except:
+            pixbuf = gtk.gdk.pixbuf_new_from_file(
+                template_conf_image_no_diagram)
+        pixbuf = self.ScaleImage(pixbuf)
+        image = gtk.Image()
+        image.set_from_pixbuf(pixbuf)
+        vbox.pack_start(image, expand = True, fill = True)
+
         ### QUESTIONS ###
         self.entries = {}
         for x in reversed(self.questions):
             hbox = gtk.HBox()
-            label = gtk.Label("Substitute <b>%s</b> with: " % x)
+            label = gtk.Label("Substitute \"%s\" with: " % x)
             hbox.pack_start(label)
             self.entries[x] = gtk.Entry()
             self.entries[x].set_text("%("+x+")")
@@ -922,6 +935,11 @@ class GlobalConfiguration:
         self.FillTemplateWindow.destroy()
 
     def SaveFillTemplateWindow(self, widget, data = None):
+        diag = self.GetFillTemplateDiag()
+        self.SetDiagramInGui(diag, self.FillTemplateDiagName)
+        self.DeleteFillTemplateWindow(None)
+
+    def GetFillTemplateDiag(self):
         self.questions_answers = {}
         for q in self.questions:
             self.questions_answers[q] = self.entries[q].get_text()
@@ -942,8 +960,19 @@ class GlobalConfiguration:
             for q, a in self.questions_answers.iteritems():
                 funzione = funzione.replace("%("+q+")", a)
             Arrows[arr][key_arrows_tex_label] = funzione
-        self.SetDiagramInGui(diag, self.FillTemplateDiagName)
-        self.DeleteFillTemplateWindow(None)
+        return diag
+
+    def FillTemplatePreview(self):
+        # Do not call again the timeout if fill template window is
+        # closed
+        if self.FillTemplateDiagram == None:
+            self.commu.TemporaryBuild = None
+            return False
+        diag = self.GetFillTemplateDiag()
+        diagram_code = self.BuildFromDiagram(diag)
+        diagram_code = re.sub("%\(([^\)]*)\)", "\\\\fbox{\\1}", diagram_code)
+        self.commu.TemporaryBuild = diagram_code
+        return True
 
 class DiagramConfiguration:
     def __init__(self,diag_configobj = None):
