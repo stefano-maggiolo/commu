@@ -28,6 +28,7 @@ from commu_preview import *
 from commu_main import display_warning
 from configobj import ConfigObj
 
+# TODO: images need to be stored in cache, not in config
 KEY_TEMPLATE_DIRECTORY = 'Templates'
 KEY_TEMPLATE_CONF_FILE = 'commu_templates.db'
 KEY_TEMPLATE_NO_IMAGE = 'no_diagram.png'
@@ -50,8 +51,8 @@ if not USER_DIRECTORY == INSTALLATION_DIRECTORY:
             shutil.copy(os.path.join(INSTALLATION_DIRECTORY, KEY_TEMPLATE_NO_IMAGE),template_conf_image_no_diagram)
         except:
             pass
-        if not os.path.isfile(template_conf_file):
-                try:
+    if not os.path.isfile(template_conf_file):
+        try:
             shutil.copy(os.path.join(INSTALLATION_DIRECTORY, KEY_TEMPLATE_CONF_FILE), template_conf_file)
         except:
             pass
@@ -204,8 +205,8 @@ class GlobalConfiguration:
             for f in self.commu.arrows[direzione]:
                 _from, _to = direzione
                 diagram.AddArrow(
-                    source_label = _from,#self.commu.GenerateNodeName(*_from),
-                    target_label = _to,#self.commu.GenerateNodeName(*_to),
+                    source_label = self.commu.GenerateNodeName(*_from),
+                    target_label = self.commu.GenerateNodeName(*_to),
                     inarcamento = f.inarcamento(),
                     tex_label = f.funzione(),
                     tratto = f.tratto,
@@ -235,7 +236,6 @@ class GlobalConfiguration:
         Nodes = diag[key_nodes]
         for node_name in Nodes.sections:
             node = Nodes[node_name]
-                        print node_name, node
             r, c = node.get(key_nodes_pos, default_key_nodes_pos)
             r, c = int(r), int(c)
             tex_node = node.get(key_nodes_tex,default_key_nodes_tex)
@@ -247,8 +247,9 @@ class GlobalConfiguration:
         Arrows = diag[key_arrows]
         for arr in Arrows.sections:
             arrow = Arrows[arr]
-            _from = tuple([int(x) for x in arrow[key_arrows_source_label]])
-            _to   = tuple([int(x) for x in arrow[key_arrows_target_label]])
+            _from_label = arrow[key_arrows_source_label]
+            _to_label   = arrow[key_arrows_target_label]
+
             tratto = int(arrow.get(key_arrows_tratto,
                                    default_key_arrows_tratto))
             coda =   int(arrow.get(key_arrows_coda,
@@ -264,7 +265,7 @@ class GlobalConfiguration:
             funzione = arrow.get(key_arrows_tex_label,
                                  default_key_arrows_tex_label)
 
-            s += " " * (rientro+2) + "\\path (%s)" % self.commu.GenerateNodeName(*_from)
+            s += " " * (rientro+2) + "\\path (%s)" % _from_label
             if tratto == TRATTO.index("No"):
                 s += " --"
             else:
@@ -298,7 +299,7 @@ class GlobalConfiguration:
                 if altobasso == SCRITTA.index("Above"): s += "rotate=180,"
                 s += "sloped] {$\scriptstyle{\widetilde{\ \ \ }}$} "
 
-            s += "(%s)" % self.commu.GenerateNodeName(*_to)
+            s += "(%s)" % _to_label
             s += ";\n"
         s += " " * rientro + "\\end{tikzpicture}\n"
         s += " " * rientro + "\\]\n"
@@ -318,7 +319,6 @@ class GlobalConfiguration:
         diagram_code = diagram_code.replace('\[','$$',1)
         diagram_code = diagram_code[:-3]+'$$\n'
         diagram_code = '\n\\beginpgfgraphicnamed{%s}\n%s\\endpgfgraphicnamed' % (job_name,diagram_code)
-                print diagram_code
         preview.Compile(diagram_code, False, False,
                         other_commands = '\\pgfrealjobname{poppoppero}',
                         additional_args=['-jobname=%s' % job_name])
@@ -328,7 +328,7 @@ class GlobalConfiguration:
             return
         image_output = '%s/%s.png' % (preview.tempDir,job_name)
 
-                try:
+        try:
             args = ['gs',
                     '-q',
                     '-dBATCH',
@@ -361,9 +361,7 @@ class GlobalConfiguration:
             preview.RemoveTemporaryFiles()
 
     def SetDiagramInGui(self,diag, diag_name):
-        # self.commu e' l'istanza di commu, da cui puoi prendere
-        # quello che serve della gui
-                self.commu.on_btReset_clicked(None)
+        self.commu.on_btReset_clicked(None)
         rientro = int(float(diag.get(key_char_margin,
                                      default_key_char_margin)))
         w = float(diag.get(key_hor_distance,
@@ -372,26 +370,30 @@ class GlobalConfiguration:
                            default_key_ver_distance))
 
         Nodes = diag[key_nodes]
-                maxr, maxc = 0, 0
+        maxr, maxc = 0, 0
         for node_name in Nodes.sections:
             node = Nodes[node_name]
-            r, c = node.get(key_nodes_pos, default_key_nodes_pos)
-                        maxr = max(int(r), maxr)
-                        maxc = max(int(c), maxc)
-                self.commu.AdjustTable(maxr+1, maxc+1)
+            r, c = (int(x) for x in node.get(key_nodes_pos, default_key_nodes_pos))
+            maxr = max(r, maxr)
+            maxc = max(c, maxc)
+            self.commu.AdjustTable(maxr+1, maxc+1)
 
         for node_name in Nodes.sections:
             node = Nodes[node_name]
-            r, c = node.get(key_nodes_pos, default_key_nodes_pos)
-            r, c = int(r), int(c)
+            r, c = (int(x) for x in node.get(key_nodes_pos, default_key_nodes_pos))
             tex_node = node.get(key_nodes_tex, default_key_nodes_tex)
-                        self.commu.objects[(r,c)].SetName(tex_node)
+            self.commu.objects[(r,c)].SetName(tex_node)
 
         Arrows = diag[key_arrows]
         for arr in Arrows.sections:
             arrow = Arrows[arr]
-            _from = tuple([int(x) for x in arrow[key_arrows_source_label]])
-            _to   = tuple([int(x) for x in arrow[key_arrows_target_label]])
+            _from_label = arrow[key_arrows_source_label]
+            _to_label   = arrow[key_arrows_target_label]
+            _from = tuple([int(x) for x in Nodes[_from_label].get(key_nodes_pos,
+                                                                  default_key_nodes_pos)])
+            _to = tuple([int(x) for x in Nodes[_to_label].get(key_nodes_pos,
+                                                              default_key_nodes_pos)])
+
             tratto = int(arrow.get(key_arrows_tratto,
                                    default_key_arrows_tratto))
             coda =   int(arrow.get(key_arrows_coda,
@@ -408,8 +410,9 @@ class GlobalConfiguration:
                                  default_key_arrows_preset))
             funzione = arrow.get(key_arrows_tex_label,
                                  default_key_arrows_tex_label)
-                        self.commu.creaArrows(_from, _to)
-                self.commu.ShowFromTo(None, None)
+
+            self.commu.creaArrows(_from, _to)
+            self.commu.ShowFromTo(None, None)
 
         ## Lascia questo per ultimo
         self.SetLastDiagramSaved(diag_name)
@@ -896,7 +899,7 @@ class DiagramConfiguration:
                 [key_arrows_inarcamento, inarcamento],
                 [key_arrows_preset, preset]
                 ]:
-                NewArrow[key] = value
+            NewArrow[key] = value
 
         self.Arrows[str(self.arrows_count)] = NewArrow
         self.arrows_count += 1
