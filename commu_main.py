@@ -32,6 +32,7 @@ import gtk.glade
 import gobject
 import operator
 import os
+import re
 
 from commu_conf import *
 from commu_objects import *
@@ -432,15 +433,7 @@ class Commu:
 
     def on_btReset_clicked(self, widget):
         if self.ask_loss_information():
-            if self._to != None: self.objects[self._to].SetNormal(self.BGcolor)
-            if self._from != None: self.objects[self._from].SetNormal(self.BGcolor)
-            self._to = self._from = None
-            self.arrows = {}
-            self.objects[(0,0)].Reset()
-            self.AdjustTable(1, 1)
-            self.AdjustTable(4, 4)
-            self.ShowFromTo(None, None)
-            self.globalConfiguration.UnSetLastDiagramSaved()
+            self.Reset()
 
     def on_add_clicked(self, widget, data):
         if self._from != None and self._to != None:
@@ -542,6 +535,17 @@ class Commu:
                 return
         self.objects[self.previousFocus].label.grab_focus()
 
+    def Reset(self):
+        if self._to != None: self.objects[self._to].SetNormal(self.BGcolor)
+        if self._from != None: self.objects[self._from].SetNormal(self.BGcolor)
+        self._to = self._from = None
+        self.arrows = {}
+        self.objects[(0,0)].Reset()
+        self.AdjustTable(1, 1)
+        self.AdjustTable(4, 4)
+        self.ShowFromTo(None, None)
+        self.globalConfiguration.UnSetLastDiagramSaved()
+
     def GenerateNodeName(self,r,c):
         return 'A%d_%d' % (r,c)
 
@@ -603,6 +607,7 @@ class Commu:
                 s += ";\n"
         s += " " * rientro + "\\end{tikzpicture}\n"
         s += " " * rientro + "\\]\n"
+        s = re.sub("%\(([^\)]*)\)", "\\\\fbox{\\1}", s)
         return s
 
     def on_btExport_clicked(self, widget):

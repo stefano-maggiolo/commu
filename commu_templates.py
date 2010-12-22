@@ -318,6 +318,7 @@ class GlobalConfiguration:
         diagram_code = self.BuildFromDiagram(diagram)
         diagram_code = diagram_code.replace('\[','$$',1)
         diagram_code = diagram_code[:-3]+'$$\n'
+        diagram_code = re.sub("%\(([^\)]*)\)", "\\\\fbox{\\1}", diagram_code)
         diagram_code = '\n\\beginpgfgraphicnamed{%s}\n%s\\endpgfgraphicnamed' % (job_name,diagram_code)
         preview.Compile(diagram_code, False, False,
                         other_commands = '\\pgfrealjobname{poppoppero}',
@@ -360,8 +361,8 @@ class GlobalConfiguration:
         if remove_temp:
             preview.RemoveTemporaryFiles()
 
-    def SetDiagramInGui(self,diag, diag_name):
-        self.commu.on_btReset_clicked(None)
+    def SetDiagramInGui(self, diag, diag_name):
+        self.commu.Reset()
         rientro = int(float(diag.get(key_char_margin,
                                      default_key_char_margin)))
         w = float(diag.get(key_hor_distance,
@@ -641,7 +642,11 @@ class GlobalConfiguration:
         row = self.store[item_number]
         diag_name = row[self.COL_NAMES]
         diagram = self.diagrams[diag_name]
-        self.SetDiagramInGui(diagram, diag_name)
+        self.FindQuestions(diagram)
+        if self.questions != []:
+            self.CreateFillTemplateWindow(diagram, diag_name)
+        else:
+            self.SetDiagramInGui(diagram, diag_name)
 
     def RenameLoadWindow(self, widget, data = None):
         selection = self.iconview.get_selected_items()
@@ -830,6 +835,115 @@ class GlobalConfiguration:
             while gtk.events_pending():
                 gtk.main_iteration()
         self.SaveConfiguration()
+
+# From now on, we work on variables in templates
+    def FindQuestions(self, diag):
+        """ Analyze the diagram to find all variables. Returns a list
+        of variables names.
+        """
+        self.questions = []
+        def add_questions(string):
+            cur_questions = re.findall("%\(([^\)]*)\)", string)
+            for q in cur_questions:
+                if q not in self.questions:
+                    self.questions.append(q)
+
+        Nodes = diag[key_nodes]
+        for node_name in Nodes.sections:
+            tex_node = Nodes[node_name].get(key_nodes_tex,
+                                            default_key_nodes_tex)
+            add_questions(tex_node)
+
+        Arrows = diag[key_arrows]
+        for arr in Arrows.sections:
+            funzione = Arrows[arr].get(key_arrows_tex_label,
+                                       default_key_arrows_tex_label)
+            add_questions(funzione)
+
+    def CreateFillTemplateWindow(self, diagram, diag_name):
+        """ Create the window asking the user what to substitute with
+        the variables. Variables are of the form %(name). Same
+        variables are going to be substituted with the same value.
+        """
+        self.FillTemplateDiagram = diagram
+        self.FillTemplateDiagName = diag_name
+
+        win = gtk.Window(gtk.WINDOW_TOPLEVEL)
+        self.FillTemplateWindow = win
+        win.set_modal(True)
+        win.set_title("Fill the template")
+        win.connect("delete-event", self.DeleteChooseNameWindow)
+
+        accelgroup = gtk.AccelGroup()
+        accelgroup.connect_group(ord('W'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.DeleteFillTemplateWindow(None))
+        win.add_accel_group(accelgroup)
+
+        ### VBOX ###
+        vbox = gtk.VBox()
+        vbox.set_spacing(6)
+        vbox.set_border_width(6)
+        win.add(vbox)
+
+        ### QUESTIONS ###
+        self.entries = {}
+        for x in reversed(self.questions):
+            hbox = gtk.HBox()
+            label = gtk.Label("Substitute <b>%s</b> with: " % x)
+            hbox.pack_start(label)
+            self.entries[x] = gtk.Entry()
+            self.entries[x].set_text("%("+x+")")
+            hbox.pack_end(self.entries[x])
+            vbox.pack_start(hbox, expand = False, fill = False)
+
+        ### Buttons' HBOX ###
+        hbox = gtk.HBox()
+
+        ### BUTTONS ###
+        ## Cancel button
+        button = GetButtonFromStock(gtk.STOCK_CANCEL,
+                                    'Cancel',
+                                    self.DeleteFillTemplateWindow)
+        hbox.pack_end(button, expand = False, fill = False)
+
+        ## OK button
+        button = GetButtonFromStock(gtk.STOCK_OK,
+                                    'Ok',
+                                    self.SaveFillTemplateWindow)
+        hbox.pack_end(button, expand = False, fill = False)
+
+        vbox.pack_end(hbox, expand = False, fill = False)
+
+        win.show_all()
+
+    def DeleteFillTemplateWindow(self, widget, data = None):
+        self.FillTemplateDiagram = None
+        self.FillTemplateDiagName = None
+        self.FillTemplateWindow.destroy()
+
+    def SaveFillTemplateWindow(self, widget, data = None):
+        self.questions_answers = {}
+        for q in self.questions:
+            self.questions_answers[q] = self.entries[q].get_text()
+
+        diag = self.FillTemplateDiagram
+        Nodes = diag[key_nodes]
+        for node_name in Nodes.sections:
+            tex_node = Nodes[node_name].get(key_nodes_tex,
+                                            default_key_nodes_tex)
+            for q, a in self.questions_answers.iteritems():
+                tex_node = tex_node.replace("%("+q+")", a)
+            Nodes[node_name][key_nodes_tex] = tex_node
+
+        Arrows = diag[key_arrows]
+        for arr in Arrows.sections:
+            funzione = Arrows[arr].get(key_arrows_tex_label,
+                                       default_key_arrows_tex_label)
+            for q, a in self.questions_answers.iteritems():
+                funzione = funzione.replace("%("+q+")", a)
+            Arrows[arr][key_arrows_tex_label] = funzione
+        self.SetDiagramInGui(diag, self.FillTemplateDiagName)
+        self.DeleteFillTemplateWindow(None)
 
 class DiagramConfiguration:
     def __init__(self,diag_configobj = None):
