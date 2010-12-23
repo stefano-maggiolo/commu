@@ -21,6 +21,7 @@ import subprocess
 import pygtk
 pygtk.require("2.0")
 import gtk
+import copy
 
 from commu_conf import *
 from commu_preview import *
@@ -369,6 +370,9 @@ class GlobalConfiguration:
                            default_key_hor_distance))
         h = float(diag.get(key_ver_distance,
                            default_key_ver_distance))
+        self.commu.spinR.set_value(int(rientro))
+        self.commu.spinW.set_value(float(w))
+        self.commu.spinH.set_value(float(h))
 
         Nodes = diag[key_nodes]
         maxr, maxc = 0, 0
@@ -412,7 +416,12 @@ class GlobalConfiguration:
             funzione = arrow.get(key_arrows_tex_label,
                                  default_key_arrows_tex_label)
 
-            self.commu.creaArrows(_from, _to)
+            a = self.commu.creaArrows(_from, _to)
+            a.preset.set_active(int(tipo))
+            a.set(int(coda), int(tratto), int(decorazione), int(testa))
+            a.ab.set_active(int(altobasso))
+            a.funz.set_text(funzione)
+            a.inarc.set_value(int(inarcamento))
             self.commu.ShowFromTo(None, None)
 
         ## Lascia questo per ultimo
@@ -944,7 +953,7 @@ class GlobalConfiguration:
         for q in self.questions:
             self.questions_answers[q] = self.entries[q].get_text()
 
-        diag = self.FillTemplateDiagram
+        diag = copy.deepcopy(self.FillTemplateDiagram)
         Nodes = diag[key_nodes]
         for node_name in Nodes.sections:
             tex_node = Nodes[node_name].get(key_nodes_tex,

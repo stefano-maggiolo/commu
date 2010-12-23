@@ -306,6 +306,7 @@ class Commu:
         self.objects[_from].IncrementOutgoingArrows()
         self.objects[_to].IncrementIncomingArrows()
         self.ShowFromTo(_from, _to)
+        return f
 
     def ShowFromTo(self, _from, _to):
         self.boxFrecce.foreach(lambda w: self.boxFrecce.remove(w))
