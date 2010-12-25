@@ -817,8 +817,8 @@ class GlobalConfiguration:
                     not os.path.isfile(image_name):
                 changed = True
                 self.CreateImageForDiagram(diagram,
-                                                           name = name,
-                                                           remove_temp = True)
+                                           name = name,
+                                           remove_temp = True)
                 image_name = diagram[key_diagram_image]
 
             try:
@@ -915,11 +915,14 @@ class GlobalConfiguration:
             hbox.pack_start(label)
             self.entries[x] = gtk.Entry()
             self.entries[x].set_text("%("+x+")")
+            self.entries[x].connect("activate",
+                                    self.SaveFillTemplateWindow)
             hbox.pack_end(self.entries[x])
             vbox.pack_start(hbox, expand = False, fill = False)
 
         ### Buttons' HBOX ###
         hbox = gtk.HBox()
+        vbox.pack_end(hbox, expand = False, fill = False)
 
         ### BUTTONS ###
         ## Cancel button
@@ -933,8 +936,6 @@ class GlobalConfiguration:
                                     'Ok',
                                     self.SaveFillTemplateWindow)
         hbox.pack_end(button, expand = False, fill = False)
-
-        vbox.pack_end(hbox, expand = False, fill = False)
 
         win.show_all()
 

@@ -131,6 +131,8 @@ class Commu:
                                  lambda *etc: self.arrow_up())
         accelgroup.connect_group(ord('D'), gtk.gdk.CONTROL_MASK, 0,
                                  lambda *etc: self.arrow_right())
+        accelgroup.connect_group(ord('O'), gtk.gdk.CONTROL_MASK, 0,
+                                 lambda *etc: self.on_btLoad_clicked(None))
         self.window.add_accel_group(accelgroup)
 
         # Manage preview
