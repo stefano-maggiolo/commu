@@ -24,9 +24,9 @@ TESTA = ["Arrow", "Double arrow", "No"]
 # Installation directory or just source directory?
 import os
 
-if 'commu.py' in os.listdir(os.path.dirname(__file__)):
+if 'commu.py' in os.listdir(os.path.dirname(os.path.realpath(__file__))):
     # launch from a source directory
-    INSTALLATION_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
+    INSTALLATION_DIRECTORY = os.path.realpath(os.path.dirname(os.path.realpath(__file__)))
 else:
     INSTALLATION_DIRECTORY = os.path.join("/", "usr", "share", "commu")
 

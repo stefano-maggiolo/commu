@@ -20,7 +20,7 @@ import sys
 
 if __name__ == "__main__":
     import os
-    if not 'commu_main.py' in os.listdir(os.path.dirname(__file__)):
+    if not 'commu_main.py' in os.listdir(os.path.dirname(os.path.realpath(__file__))):
         # commu is not launched from a source folder
         sys.path.append('/usr/share/python-support/commu/commu')
     import commu_main
