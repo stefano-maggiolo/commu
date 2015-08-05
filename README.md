@@ -21,14 +21,15 @@ many almost-equal diagrams. And, it exports code using the PGF/TikZ
 library, often giving a more pleasant output with respect to XYpic.
 
 To see a small presentation of Commu, go to the address
-http://people.sissa.it/~maggiolo/commu/.
+http://poisson.phc.unipi.it/~maggiolo/Software/commu/.
 
 
 Installation on Linux
 ---------------------
 
 You can just grab the sources from here or from the website
-http://people.sissa.it/~maggiolo/commu/ and run them from the repository
+http://poisson.phc.unipi.it/~maggiolo/Software/commu/ and run them
+from the repository
 
 ```bash
 python ./commu.py
